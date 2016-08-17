@@ -1,11 +1,14 @@
-package vgalloy.javaoverrabbitmq.internal.client;
+package vgalloy.javaoverrabbitmq.internal.marshaller.impl;
 
 import com.google.gson.Gson;
 import org.junit.Test;
+
 import vgalloy.javaoverrabbitmq.api.fake.message.DoubleIntegerMessage;
-import vgalloy.javaoverrabbitmq.internal.marshaller.GsonMarshaller;
+import vgalloy.javaoverrabbitmq.api.fake.message.IntegerMessage;
+import vgalloy.javaoverrabbitmq.internal.marshaller.RabbitMessageMarshaller;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 /**
  * @author Vincent Galloy
@@ -13,10 +16,10 @@ import static org.junit.Assert.assertEquals;
  */
 public class GsonMarshallerTest {
 
-    private final GsonMarshaller gsonMarshaller = GsonMarshaller.INSTANCE;
+    private final RabbitMessageMarshaller gsonMarshaller = GsonMarshaller.INSTANCE;
 
     @Test
-    public void serialization1() {
+    public void testSimpleSerialization() {
         DoubleIntegerMessage doubleIntegerMessage = new DoubleIntegerMessage(1, 2);
         assertEquals(doubleIntegerMessage, gsonMarshaller.deserialize(DoubleIntegerMessage.class, gsonMarshaller.serialize(doubleIntegerMessage)));
     }
@@ -32,5 +35,11 @@ public class GsonMarshallerTest {
     public void serializationByByteArray() {
         String message = "Ok Bro";
         assertEquals(message, new String(message.getBytes()));
+    }
+
+    @Test
+    public void testNullSerialization() {
+        IntegerMessage result = gsonMarshaller.deserialize(IntegerMessage.class, gsonMarshaller.serialize(null));
+        assertNull(result);
     }
 }

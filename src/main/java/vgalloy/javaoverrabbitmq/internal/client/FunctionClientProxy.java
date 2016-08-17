@@ -15,7 +15,8 @@ import org.slf4j.LoggerFactory;
 import vgalloy.javaoverrabbitmq.api.queue.FunctionQueueDefinition;
 import vgalloy.javaoverrabbitmq.internal.exception.JavaOverRabbitException;
 import vgalloy.javaoverrabbitmq.internal.exception.TimeoutException;
-import vgalloy.javaoverrabbitmq.internal.marshaller.GsonMarshaller;
+import vgalloy.javaoverrabbitmq.internal.marshaller.impl.GlobalMarshaller;
+import vgalloy.javaoverrabbitmq.internal.marshaller.impl.GsonMarshaller;
 
 /**
  * @author Vincent Galloy
@@ -43,7 +44,7 @@ public final class FunctionClientProxy<P, R> implements Function<P, R> {
     public R apply(P parameter) {
         byte[] messageAsByte = GsonMarshaller.INSTANCE.serialize(parameter);
         byte[] resultAsByte = sendRPC(messageAsByte);
-        return GsonMarshaller.INSTANCE.deserialize(functionQueueDefinition.getReturnMessageClass(), resultAsByte);
+        return GlobalMarshaller.INSTANCE.deserialize(functionQueueDefinition.getReturnMessageClass(), resultAsByte);
     }
 
     /**

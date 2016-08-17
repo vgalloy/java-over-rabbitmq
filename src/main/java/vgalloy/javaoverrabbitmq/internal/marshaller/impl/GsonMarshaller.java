@@ -1,6 +1,8 @@
-package vgalloy.javaoverrabbitmq.internal.marshaller;
+package vgalloy.javaoverrabbitmq.internal.marshaller.impl;
 
 import com.google.gson.Gson;
+
+import vgalloy.javaoverrabbitmq.internal.marshaller.RabbitMessageMarshaller;
 
 /**
  * @author Vincent Galloy
@@ -8,10 +10,11 @@ import com.google.gson.Gson;
  */
 public final class GsonMarshaller implements RabbitMessageMarshaller {
 
-    public static final GsonMarshaller INSTANCE = new GsonMarshaller();
+    public static final RabbitMessageMarshaller INSTANCE = new GsonMarshaller();
 
     /**
      * Constructor.
+     *
      * To prevent external instantiation.
      */
     private GsonMarshaller() {

@@ -8,7 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import vgalloy.javaoverrabbitmq.api.RabbitConsumer;
 import vgalloy.javaoverrabbitmq.api.queue.ConsumerQueueDefinition;
-import vgalloy.javaoverrabbitmq.internal.marshaller.GsonMarshaller;
+import vgalloy.javaoverrabbitmq.internal.marshaller.impl.GsonMarshaller;
 
 import java.io.IOException;
 import java.util.Objects;

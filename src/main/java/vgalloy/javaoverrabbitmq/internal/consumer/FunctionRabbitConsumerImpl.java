@@ -14,7 +14,9 @@ import org.slf4j.LoggerFactory;
 
 import vgalloy.javaoverrabbitmq.api.RabbitConsumer;
 import vgalloy.javaoverrabbitmq.api.queue.FunctionQueueDefinition;
-import vgalloy.javaoverrabbitmq.internal.marshaller.GsonMarshaller;
+import vgalloy.javaoverrabbitmq.internal.exception.RabbitConsumerException;
+import vgalloy.javaoverrabbitmq.internal.marshaller.impl.GlobalMarshaller;
+import vgalloy.javaoverrabbitmq.internal.marshaller.impl.GsonMarshaller;
 
 /**
  * @author Vincent Galloy
@@ -55,15 +57,12 @@ public final class FunctionRabbitConsumerImpl<P, R> extends QueueingConsumer imp
 
         try {
             R result = service.apply(paramAsObject);
-
-
-
-            byte[] resultAsByte = GsonMarshaller.INSTANCE.serialize(result);
-
+            byte[] resultAsByte = GlobalMarshaller.INSTANCE.serialize(result);
             getChannel().basicPublish("", properties.getReplyTo(), replyProps, resultAsByte);
         } catch (Exception e) {
             LOGGER.error("{}", e);
-            getChannel().basicPublish("", properties.getReplyTo(), replyProps, null);
+            byte[] resultAsByte = GlobalMarshaller.INSTANCE.serialize(new RabbitConsumerException(e.getMessage()));
+            getChannel().basicPublish("", properties.getReplyTo(), replyProps, resultAsByte);
         }
         getChannel().basicAck(envelope.getDeliveryTag(), false);
     }

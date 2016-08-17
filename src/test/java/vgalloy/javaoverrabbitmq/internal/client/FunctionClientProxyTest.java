@@ -11,12 +11,14 @@ import vgalloy.javaoverrabbitmq.api.fake.message.IntegerMessage;
 import vgalloy.javaoverrabbitmq.api.fake.method.FunctionMethodImpl;
 import vgalloy.javaoverrabbitmq.api.fake.util.Utils;
 import vgalloy.javaoverrabbitmq.api.queue.FunctionQueueDefinition;
+import vgalloy.javaoverrabbitmq.internal.exception.RabbitRemoteException;
 import vgalloy.javaoverrabbitmq.util.TestUtil;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 /**
  * @author Vincent Galloy
@@ -26,7 +28,7 @@ public class FunctionClientProxyTest {
 
     @Test
     public void testSimpleRPC() {
-        FunctionQueueDefinition<DoubleIntegerMessage, IntegerMessage> fakeFunctionQueueDefinition = Factory.createQueue("FAKE_QUEUE_NAME", DoubleIntegerMessage.class, IntegerMessage.class);
+        FunctionQueueDefinition<DoubleIntegerMessage, IntegerMessage> fakeFunctionQueueDefinition = Factory.createQueue(TestUtil.getRandomQueueName(), DoubleIntegerMessage.class, IntegerMessage.class);
         RabbitConsumer rabbitConsumer = Factory.createConsumer(Utils.getConnectionFactory(), fakeFunctionQueueDefinition, new FunctionMethodImpl());
 
         Function<DoubleIntegerMessage, IntegerMessage> remote = Factory.createClient(Utils.getConnectionFactory(), fakeFunctionQueueDefinition);
@@ -82,6 +84,8 @@ public class FunctionClientProxyTest {
         long start = System.currentTimeMillis();
         try {
             remote.apply(new DoubleIntegerMessage(1, 2));
+            fail("No Exception ! ! ");
+        } catch (RabbitRemoteException e) {
             assertTrue(System.currentTimeMillis() - start < 500);
         } finally {
             rabbitConsumer.close();
@@ -99,7 +103,7 @@ public class FunctionClientProxyTest {
 
         // WHEN
         try {
-            IntegerMessage result =  remote.apply(new DoubleIntegerMessage(1, 2));
+            IntegerMessage result = remote.apply(new DoubleIntegerMessage(1, 2));
             assertNull(result);
         } finally {
             rabbitConsumer.close();
