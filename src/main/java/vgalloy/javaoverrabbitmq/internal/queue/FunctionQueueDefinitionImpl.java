@@ -48,12 +48,12 @@ public class FunctionQueueDefinitionImpl<P, R> implements FunctionQueueDefinitio
     }
 
     @Override
-    public void setTimeout(long timeoutMillis) {
-        this.timeoutMillis = timeoutMillis;
+    public long getTimeout() {
+        return timeoutMillis;
     }
 
     @Override
-    public long getTimeout() {
-        return timeoutMillis;
+    public void setTimeout(long timeoutMillis) {
+        this.timeoutMillis = timeoutMillis;
     }
 }

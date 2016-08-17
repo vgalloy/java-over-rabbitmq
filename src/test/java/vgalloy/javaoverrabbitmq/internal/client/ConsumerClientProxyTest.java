@@ -1,9 +1,6 @@
 package vgalloy.javaoverrabbitmq.internal.client;
 
-import java.util.function.Consumer;
-
 import org.junit.Test;
-
 import vgalloy.javaoverrabbitmq.api.Factory;
 import vgalloy.javaoverrabbitmq.api.RabbitConsumer;
 import vgalloy.javaoverrabbitmq.api.fake.message.IntegerMessage;
@@ -12,6 +9,8 @@ import vgalloy.javaoverrabbitmq.api.fake.method.SimpleConsumerImpl;
 import vgalloy.javaoverrabbitmq.api.fake.util.Utils;
 import vgalloy.javaoverrabbitmq.api.queue.ConsumerQueueDefinition;
 import vgalloy.javaoverrabbitmq.util.TestUtil;
+
+import java.util.function.Consumer;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -26,7 +25,7 @@ public class ConsumerClientProxyTest {
     public void testSimple() throws Exception {
         // GIVEN
         ConsumerQueueDefinition<IntegerMessage> queueDefinition = Factory.createQueue(TestUtil.getRandomQueueName(), IntegerMessage.class);
-        final SimpleConsumerImpl simpleQueueMethod = new SimpleConsumerImpl();
+        SimpleConsumerImpl simpleQueueMethod = new SimpleConsumerImpl();
         RabbitConsumer rabbitConsumer2 = Factory.createConsumer(Utils.getConnectionFactory(), queueDefinition, simpleQueueMethod);
 
         Consumer<IntegerMessage> remote = Factory.createClient(Utils.getConnectionFactory(), queueDefinition);
@@ -48,7 +47,7 @@ public class ConsumerClientProxyTest {
     public void testNullAsArgument() throws Exception {
         // GIVEN
         ConsumerQueueDefinition<IntegerMessage> queueDefinition = Factory.createQueue(TestUtil.getRandomQueueName(), IntegerMessage.class);
-        final AcceptNullMethodImpl acceptNullMethod = new AcceptNullMethodImpl();
+        AcceptNullMethodImpl acceptNullMethod = new AcceptNullMethodImpl();
         RabbitConsumer rabbitConsumer2 = Factory.createConsumer(Utils.getConnectionFactory(), queueDefinition, acceptNullMethod);
 
         Consumer<IntegerMessage> remote = Factory.createClient(Utils.getConnectionFactory(), queueDefinition);

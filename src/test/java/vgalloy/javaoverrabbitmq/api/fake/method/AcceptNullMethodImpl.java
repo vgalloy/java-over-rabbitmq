@@ -1,8 +1,8 @@
 package vgalloy.javaoverrabbitmq.api.fake.method;
 
-import java.util.function.Consumer;
-
 import vgalloy.javaoverrabbitmq.api.fake.message.IntegerMessage;
+
+import java.util.function.Consumer;
 
 /**
  * @author Vincent Galloy

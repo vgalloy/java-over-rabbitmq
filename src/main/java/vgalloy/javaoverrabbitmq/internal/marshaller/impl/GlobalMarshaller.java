@@ -3,7 +3,6 @@ package vgalloy.javaoverrabbitmq.internal.marshaller.impl;
 import vgalloy.javaoverrabbitmq.internal.exception.RabbitConsumerException;
 import vgalloy.javaoverrabbitmq.internal.exception.RabbitRemoteException;
 import vgalloy.javaoverrabbitmq.internal.marshaller.RabbitMessageMarshaller;
-import vgalloy.javaoverrabbitmq.internal.message.RabbitResponse;
 
 /**
  * @author Vincent Galloy
@@ -11,7 +10,7 @@ import vgalloy.javaoverrabbitmq.internal.message.RabbitResponse;
  */
 public final class GlobalMarshaller implements RabbitMessageMarshaller {
 
-    public static final RabbitMessageMarshaller INSTANCE = new GlobalMarshaller();
+    public static final GlobalMarshaller INSTANCE = new GlobalMarshaller();
 
     private final RabbitMessageMarshaller rabbitMessageMarshaller = GsonMarshaller.INSTANCE;
 
@@ -25,19 +24,28 @@ public final class GlobalMarshaller implements RabbitMessageMarshaller {
 
     @Override
     public <M> byte[] serialize(M message) {
-        byte[] responseAsByte = rabbitMessageMarshaller.serialize(message);
-        boolean isError = message != null && RabbitConsumerException.class.isAssignableFrom(message.getClass());
-        RabbitResponse rabbitResponse = new RabbitResponse(responseAsByte, isError);
-        return rabbitMessageMarshaller.serialize(rabbitResponse);
+        return rabbitMessageMarshaller.serialize(message);
     }
 
     @Override
     public <M> M deserialize(Class<M> clazz, byte... bytes) {
-        RabbitResponse rabbitResponse = rabbitMessageMarshaller.deserialize(RabbitResponse.class, bytes);
-        if (rabbitResponse.isError()) {
-            RabbitConsumerException rabbitConsumerException = rabbitMessageMarshaller.deserialize(RabbitConsumerException.class, rabbitResponse.getObjectAsByteArray());
+        return rabbitMessageMarshaller.deserialize(clazz, bytes);
+    }
+
+    /**
+     * Deserialize with Error.
+     *
+     * @param clazz   the class
+     * @param isError if true, the bytes should represente a {@link RabbitConsumerException}
+     * @param bytes   the message as byte array
+     * @param <M>     the message type
+     * @return the message
+     */
+    public <M> M deserialize(Class<M> clazz, boolean isError, byte... bytes) {
+        if (isError) {
+            RabbitConsumerException rabbitConsumerException = rabbitMessageMarshaller.deserialize(RabbitConsumerException.class, bytes);
             throw new RabbitRemoteException(rabbitConsumerException);
         }
-        return rabbitMessageMarshaller.deserialize(clazz, rabbitResponse.getObjectAsByteArray());
+        return deserialize(clazz, bytes);
     }
 }

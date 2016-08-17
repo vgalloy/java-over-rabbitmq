@@ -14,16 +14,16 @@ public interface FunctionQueueDefinition<P, R> extends QueueDefinition<P> {
     Class<R> getReturnMessageClass();
 
     /**
-     * Set the timeout.
-     *
-     * @param timeoutMillis the time before an exception be raise.
-     */
-    void setTimeout(long timeoutMillis);
-
-    /**
      * Get the timeout.
      *
      * @return the timeout
      */
     long getTimeout();
+
+    /**
+     * Set the timeout.
+     *
+     * @param timeoutMillis the time before an exception be raise.
+     */
+    void setTimeout(long timeoutMillis);
 }

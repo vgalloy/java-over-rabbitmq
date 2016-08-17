@@ -2,7 +2,6 @@ package vgalloy.javaoverrabbitmq.internal.marshaller.impl;
 
 import com.google.gson.Gson;
 import org.junit.Test;
-
 import vgalloy.javaoverrabbitmq.api.fake.message.DoubleIntegerMessage;
 import vgalloy.javaoverrabbitmq.api.fake.message.IntegerMessage;
 import vgalloy.javaoverrabbitmq.internal.marshaller.RabbitMessageMarshaller;

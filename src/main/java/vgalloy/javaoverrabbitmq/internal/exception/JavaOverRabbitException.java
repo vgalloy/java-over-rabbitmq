@@ -6,6 +6,8 @@ package vgalloy.javaoverrabbitmq.internal.exception;
  */
 public class JavaOverRabbitException extends RuntimeException {
 
+    private static final long serialVersionUID = 4967432216041009952L;
+
     /**
      * Constructor.
      *
@@ -22,5 +24,15 @@ public class JavaOverRabbitException extends RuntimeException {
      */
     public JavaOverRabbitException(Throwable cause) {
         super(cause);
+    }
+
+    /**
+     * Constructor.
+     *
+     * @param message the detail message
+     * @param cause   the cause
+     */
+    public JavaOverRabbitException(String message, Throwable cause) {
+        super(message, cause);
     }
 }

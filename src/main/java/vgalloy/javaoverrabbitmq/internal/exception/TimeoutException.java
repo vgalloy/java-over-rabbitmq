@@ -6,6 +6,8 @@ package vgalloy.javaoverrabbitmq.internal.exception;
  */
 public class TimeoutException extends JavaOverRabbitException {
 
+    private static final long serialVersionUID = 4034451795858748708L;
+
     /**
      * Constructor.
      *

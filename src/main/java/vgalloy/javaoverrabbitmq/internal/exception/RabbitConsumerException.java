@@ -8,6 +8,8 @@ import java.util.Objects;
  */
 public class RabbitConsumerException {
 
+    public static final String ERROR_HEADER = "isError";
+
     private final String message;
 
     /**

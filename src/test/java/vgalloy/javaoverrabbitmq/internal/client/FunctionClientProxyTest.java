@@ -1,9 +1,6 @@
 package vgalloy.javaoverrabbitmq.internal.client;
 
-import java.util.function.Function;
-
 import org.junit.Test;
-
 import vgalloy.javaoverrabbitmq.api.Factory;
 import vgalloy.javaoverrabbitmq.api.RabbitConsumer;
 import vgalloy.javaoverrabbitmq.api.fake.message.DoubleIntegerMessage;
@@ -11,8 +8,10 @@ import vgalloy.javaoverrabbitmq.api.fake.message.IntegerMessage;
 import vgalloy.javaoverrabbitmq.api.fake.method.FunctionMethodImpl;
 import vgalloy.javaoverrabbitmq.api.fake.util.Utils;
 import vgalloy.javaoverrabbitmq.api.queue.FunctionQueueDefinition;
-import vgalloy.javaoverrabbitmq.internal.exception.RabbitRemoteException;
+import vgalloy.javaoverrabbitmq.internal.exception.JavaOverRabbitException;
 import vgalloy.javaoverrabbitmq.util.TestUtil;
+
+import java.util.function.Function;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -85,7 +84,7 @@ public class FunctionClientProxyTest {
         try {
             remote.apply(new DoubleIntegerMessage(1, 2));
             fail("No Exception ! ! ");
-        } catch (RabbitRemoteException e) {
+        } catch (JavaOverRabbitException e) {
             assertTrue(System.currentTimeMillis() - start < 500);
         } finally {
             rabbitConsumer.close();

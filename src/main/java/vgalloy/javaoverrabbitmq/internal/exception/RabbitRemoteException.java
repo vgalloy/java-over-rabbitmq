@@ -8,6 +8,8 @@ import java.util.Objects;
  */
 public class RabbitRemoteException extends RuntimeException {
 
+    private static final long serialVersionUID = -9096381537997104025L;
+
     /**
      * Constructor.
      *

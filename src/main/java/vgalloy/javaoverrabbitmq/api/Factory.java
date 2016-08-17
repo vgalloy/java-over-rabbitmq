@@ -5,10 +5,11 @@ import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
 import vgalloy.javaoverrabbitmq.api.queue.ConsumerQueueDefinition;
 import vgalloy.javaoverrabbitmq.api.queue.FunctionQueueDefinition;
-import vgalloy.javaoverrabbitmq.internal.consumer.FunctionRabbitConsumerImpl;
-import vgalloy.javaoverrabbitmq.internal.consumer.ConsumerRabbitConsumerImpl;
 import vgalloy.javaoverrabbitmq.internal.client.ConsumerClientProxy;
 import vgalloy.javaoverrabbitmq.internal.client.FunctionClientProxy;
+import vgalloy.javaoverrabbitmq.internal.consumer.ConsumerRabbitConsumerImpl;
+import vgalloy.javaoverrabbitmq.internal.consumer.FunctionRabbitConsumerImpl;
+import vgalloy.javaoverrabbitmq.internal.exception.JavaOverRabbitException;
 import vgalloy.javaoverrabbitmq.internal.queue.ConsumerQueueDefinitionImpl;
 import vgalloy.javaoverrabbitmq.internal.queue.FunctionQueueDefinitionImpl;
 
@@ -44,9 +45,9 @@ public final class Factory {
     public static <P, R> Function<P, R> createClient(ConnectionFactory connectionFactory, FunctionQueueDefinition<P, R> functionQueueDefinition) {
         Objects.requireNonNull(connectionFactory, "ConnectionFactory can not be null");
         try {
-            return new FunctionClientProxy<>(connectionFactory.newConnection(), functionQueueDefinition);
+            return new FunctionClientProxy<>(functionQueueDefinition, connectionFactory.newConnection());
         } catch (IOException | TimeoutException e) {
-            throw new RuntimeException("Can not get a connection", e);
+            throw new JavaOverRabbitException("Can not get a connection", e);
         }
     }
 
@@ -61,9 +62,9 @@ public final class Factory {
     public static <P> Consumer<P> createClient(ConnectionFactory connectionFactory, ConsumerQueueDefinition<P> consumerQueueDefinition) {
         Objects.requireNonNull(connectionFactory, "ConnectionFactory can not be null");
         try {
-            return new ConsumerClientProxy<>(connectionFactory.newConnection(), consumerQueueDefinition);
+            return new ConsumerClientProxy<>(consumerQueueDefinition, connectionFactory.newConnection());
         } catch (IOException | TimeoutException e) {
-            throw new RuntimeException("Can not get a connection", e);
+            throw new JavaOverRabbitException("Can not get a connection", e);
         }
     }
 
@@ -85,11 +86,9 @@ public final class Factory {
             Channel channel = connection.createChannel();
             channel.queueDeclare(functionQueueDefinition.getName(), false, false, false, null);
             channel.basicQos(1);
-            FunctionRabbitConsumerImpl<P, R> rabbitConsumer = new FunctionRabbitConsumerImpl<>(channel, functionQueueDefinition, implementation);
-            channel.basicConsume(functionQueueDefinition.getName(), false, rabbitConsumer);
-            return rabbitConsumer;
+            return new FunctionRabbitConsumerImpl<>(channel, functionQueueDefinition, implementation);
         } catch (IOException | TimeoutException e) {
-            throw new RuntimeException("Can not get a connection", e);
+            throw new JavaOverRabbitException("Can not get a connection", e);
         }
     }
 
@@ -111,11 +110,9 @@ public final class Factory {
             channel.queueDeclare(consumerQueueDefinition.getName(), false, false, false, null);
             channel.basicQos(1);
             channel.queueDeclare(consumerQueueDefinition.getName(), false, false, false, null);
-            ConsumerRabbitConsumerImpl<P> rabbitConsumer = new ConsumerRabbitConsumerImpl<>(channel, consumerQueueDefinition, implementation);
-            channel.basicConsume(consumerQueueDefinition.getName(), false, rabbitConsumer);
-            return rabbitConsumer;
+            return new ConsumerRabbitConsumerImpl<>(channel, consumerQueueDefinition, implementation);
         } catch (IOException | TimeoutException e) {
-            throw new RuntimeException("Can not get a connection", e);
+            throw new JavaOverRabbitException("Can not get a connection", e);
         }
     }
 

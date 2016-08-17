@@ -1,28 +1,25 @@
 package vgalloy.javaoverrabbitmq.internal.consumer;
 
-import java.io.IOException;
-import java.util.Objects;
-import java.util.concurrent.TimeoutException;
-import java.util.function.Function;
-
 import com.rabbitmq.client.AMQP;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Envelope;
-import com.rabbitmq.client.QueueingConsumer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import vgalloy.javaoverrabbitmq.api.RabbitConsumer;
 import vgalloy.javaoverrabbitmq.api.queue.FunctionQueueDefinition;
 import vgalloy.javaoverrabbitmq.internal.exception.RabbitConsumerException;
-import vgalloy.javaoverrabbitmq.internal.marshaller.impl.GlobalMarshaller;
 import vgalloy.javaoverrabbitmq.internal.marshaller.impl.GsonMarshaller;
+
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
+import java.util.function.Function;
 
 /**
  * @author Vincent Galloy
  *         Created by Vincent Galloy on 15/08/16.
  */
-public final class FunctionRabbitConsumerImpl<P, R> extends QueueingConsumer implements RabbitConsumer {
+public final class FunctionRabbitConsumerImpl<P, R> extends AbstractRabbitConsumer<P> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(FunctionRabbitConsumerImpl.class);
 
@@ -37,7 +34,7 @@ public final class FunctionRabbitConsumerImpl<P, R> extends QueueingConsumer imp
      * @param service                 the service implementation
      */
     public FunctionRabbitConsumerImpl(Channel channel, FunctionQueueDefinition<P, R> functionQueueDefinition, Function<P, R> service) {
-        super(channel);
+        super(channel, functionQueueDefinition);
         this.functionQueueDefinition = Objects.requireNonNull(functionQueueDefinition);
         this.service = Objects.requireNonNull(service);
     }
@@ -45,34 +42,31 @@ public final class FunctionRabbitConsumerImpl<P, R> extends QueueingConsumer imp
     @Override
     public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, byte[] body)
             throws IOException {
-        LOGGER.debug("Received body : {}", body);
-
-        P paramAsObject = GsonMarshaller.INSTANCE.deserialize(functionQueueDefinition.getParameterMessageClass(), body);
-        LOGGER.debug("Received paramAsObject : {}", paramAsObject);
-
-        AMQP.BasicProperties replyProps = new AMQP.BasicProperties
-                .Builder()
-                .correlationId(properties.getCorrelationId())
-                .build();
 
         try {
+            LOGGER.debug("Received body : {}", body);
+
+            P paramAsObject = GsonMarshaller.INSTANCE.deserialize(functionQueueDefinition.getParameterMessageClass(), body);
+            LOGGER.debug("Received paramAsObject : {}", paramAsObject);
+
             R result = service.apply(paramAsObject);
-            byte[] resultAsByte = GlobalMarshaller.INSTANCE.serialize(result);
+            byte[] resultAsByte = GsonMarshaller.INSTANCE.serialize(result);
+
+            AMQP.BasicProperties replyProps = new AMQP.BasicProperties.Builder()
+                    .correlationId(properties.getCorrelationId())
+                    .build();
             getChannel().basicPublish("", properties.getReplyTo(), replyProps, resultAsByte);
         } catch (Exception e) {
             LOGGER.error("{}", e);
-            byte[] resultAsByte = GlobalMarshaller.INSTANCE.serialize(new RabbitConsumerException(e.getMessage()));
+            Map<String, Object> map = new HashMap<>();
+            map.put(RabbitConsumerException.ERROR_HEADER, true);
+            AMQP.BasicProperties replyProps = new AMQP.BasicProperties.Builder()
+                    .headers(map)
+                    .correlationId(properties.getCorrelationId())
+                    .build();
+            byte[] resultAsByte = GsonMarshaller.INSTANCE.serialize(new RabbitConsumerException(e.getMessage()));
             getChannel().basicPublish("", properties.getReplyTo(), replyProps, resultAsByte);
         }
         getChannel().basicAck(envelope.getDeliveryTag(), false);
-    }
-
-    @Override
-    public void close() {
-        try {
-            getChannel().close();
-        } catch (IOException | TimeoutException e) {
-            throw new RuntimeException(e);
-        }
     }
 }

@@ -1,8 +1,8 @@
 package vgalloy.javaoverrabbitmq.internal.client;
 
-import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import vgalloy.javaoverrabbitmq.api.queue.ConsumerQueueDefinition;
+import vgalloy.javaoverrabbitmq.internal.exception.JavaOverRabbitException;
 import vgalloy.javaoverrabbitmq.internal.marshaller.impl.GsonMarshaller;
 
 import java.io.IOException;
@@ -13,20 +13,19 @@ import java.util.function.Consumer;
  * @author Vincent Galloy
  *         Created by Vincent Galloy on 15/08/16.
  */
-public final class ConsumerClientProxy<P> implements Consumer<P> {
+public final class ConsumerClientProxy<P> extends AbstractClient<P> implements Consumer<P> {
 
-    private final ConsumerQueueDefinition<P> functionQueueDefinition;
-    private final Connection connection;
+    private final ConsumerQueueDefinition<P> consumerQueueDefinition;
 
     /**
      * Constructor.
      *
+     * @param consumerQueueDefinition the queue definition
      * @param connection              the connection
-     * @param functionQueueDefinition the functionQueueDefinition
      */
-    public ConsumerClientProxy(Connection connection, ConsumerQueueDefinition<P> functionQueueDefinition) {
-        this.functionQueueDefinition = Objects.requireNonNull(functionQueueDefinition);
-        this.connection = Objects.requireNonNull(connection);
+    public ConsumerClientProxy(ConsumerQueueDefinition<P> consumerQueueDefinition, Connection connection) {
+        super(consumerQueueDefinition, connection);
+        this.consumerQueueDefinition = Objects.requireNonNull(consumerQueueDefinition);
     }
 
     @Override
@@ -42,21 +41,9 @@ public final class ConsumerClientProxy<P> implements Consumer<P> {
      */
     private void sendOneWay(byte... messageAsByte) {
         try {
-            createChannel().basicPublish("", functionQueueDefinition.getName(), null, messageAsByte);
+            createChannel().basicPublish("", consumerQueueDefinition.getName(), null, messageAsByte);
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new JavaOverRabbitException(e);
         }
-    }
-
-    /**
-     * Get a new Channel for method invocation.
-     *
-     * @return the new chanel
-     * @throws IOException if the channel can not be create
-     */
-    private Channel createChannel() throws IOException {
-        Channel channel = connection.createChannel();
-        channel.queueDeclare(functionQueueDefinition.getName(), false, false, false, null);
-        return channel;
     }
 }

@@ -3,23 +3,20 @@ package vgalloy.javaoverrabbitmq.internal.consumer;
 import com.rabbitmq.client.AMQP;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Envelope;
-import com.rabbitmq.client.QueueingConsumer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import vgalloy.javaoverrabbitmq.api.RabbitConsumer;
 import vgalloy.javaoverrabbitmq.api.queue.ConsumerQueueDefinition;
 import vgalloy.javaoverrabbitmq.internal.marshaller.impl.GsonMarshaller;
 
 import java.io.IOException;
 import java.util.Objects;
-import java.util.concurrent.TimeoutException;
 import java.util.function.Consumer;
 
 /**
  * @author Vincent Galloy
  *         Created by Vincent Galloy on 17/08/16.
  */
-public final class ConsumerRabbitConsumerImpl<P> extends QueueingConsumer implements RabbitConsumer {
+public final class ConsumerRabbitConsumerImpl<P> extends AbstractRabbitConsumer<P> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ConsumerRabbitConsumerImpl.class);
     private final ConsumerQueueDefinition<P> consumerQueueDefinition;
@@ -33,7 +30,7 @@ public final class ConsumerRabbitConsumerImpl<P> extends QueueingConsumer implem
      * @param service                 the implementation
      */
     public ConsumerRabbitConsumerImpl(Channel channel, ConsumerQueueDefinition<P> consumerQueueDefinition, Consumer<P> service) {
-        super(channel);
+        super(channel, consumerQueueDefinition);
         this.consumerQueueDefinition = Objects.requireNonNull(consumerQueueDefinition);
         this.service = Objects.requireNonNull(service);
     }
@@ -41,26 +38,16 @@ public final class ConsumerRabbitConsumerImpl<P> extends QueueingConsumer implem
     @Override
     public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, byte[] body)
             throws IOException {
-        LOGGER.debug("Received body : {}", body);
-
-        P paramAsObject = GsonMarshaller.INSTANCE.deserialize(consumerQueueDefinition.getParameterMessageClass(), body);
-        LOGGER.debug("Received paramAsObject : {}", paramAsObject);
-
         try {
+            LOGGER.debug("Received body : {}", body);
+
+            P paramAsObject = GsonMarshaller.INSTANCE.deserialize(consumerQueueDefinition.getParameterMessageClass(), body);
+            LOGGER.debug("Received paramAsObject : {}", paramAsObject);
             service.accept(paramAsObject);
         } catch (Exception e) {
             LOGGER.error("{}", e);
         }
         LOGGER.debug("basicAck");
         getChannel().basicAck(envelope.getDeliveryTag(), false);
-    }
-
-    @Override
-    public void close() {
-        try {
-            getChannel().close();
-        } catch (IOException | TimeoutException e) {
-            throw new RuntimeException(e);
-        }
     }
 }
