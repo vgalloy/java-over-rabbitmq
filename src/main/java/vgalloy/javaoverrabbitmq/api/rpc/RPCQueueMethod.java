@@ -1,6 +1,6 @@
 package vgalloy.javaoverrabbitmq.api.rpc;
 
-import vgalloy.javaoverrabbitmq.api.RabbitMessage;
+import vgalloy.javaoverrabbitmq.api.message.RabbitMessage;
 
 /**
  * @author Vincent Galloy

@@ -1,12 +1,13 @@
 package vgalloy.javaoverrabbitmq.internal.impl;
 
 import com.google.gson.Gson;
+import vgalloy.javaoverrabbitmq.api.RabbitMessageMarshaller;
 
 /**
  * @author Vincent Galloy
  *         Created by Vincent Galloy on 15/08/16.
  */
-public final class GsonMarshaller {
+public final class GsonMarshaller implements RabbitMessageMarshaller {
 
     public static final GsonMarshaller INSTANCE = new GsonMarshaller();
 
@@ -17,27 +18,14 @@ public final class GsonMarshaller {
     private GsonMarshaller() {
     }
 
-    /**
-     * Serialize a message into a byte array.
-     *
-     * @param message the message as an object
-     * @param <T>     the type of the message
-     * @return the message as a byte array
-     */
+    @Override
     public <T> byte[] serialize(T message) {
         Gson gson = new Gson();
         String string = gson.toJson(message);
         return string.getBytes();
     }
 
-    /**
-     * Deserialize the message.
-     *
-     * @param clazz The Java object representation of the message
-     * @param bytes the message as a byte array
-     * @param <T>   the type of the message
-     * @return the message as an object
-     */
+    @Override
     public <T> T deserialize(Class<T> clazz, byte[] bytes) {
         Gson gson = new Gson();
         String messageAsString = new String(bytes);

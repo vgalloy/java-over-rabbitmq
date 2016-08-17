@@ -1,6 +1,6 @@
 package vgalloy.javaoverrabbitmq.api.fake.message;
 
-import vgalloy.javaoverrabbitmq.api.RabbitMessage;
+import vgalloy.javaoverrabbitmq.api.message.RabbitMessage;
 
 import java.util.Objects;
 

@@ -4,8 +4,10 @@ import com.rabbitmq.client.AMQP;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.QueueingConsumer;
-import vgalloy.javaoverrabbitmq.api.RabbitMessage;
-import vgalloy.javaoverrabbitmq.api.rpc.RPCQueue;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import vgalloy.javaoverrabbitmq.api.message.RabbitMessage;
+import vgalloy.javaoverrabbitmq.api.queue.QueueDefinition;
 import vgalloy.javaoverrabbitmq.api.rpc.RPCQueueMethod;
 
 import java.io.IOException;
@@ -17,39 +19,61 @@ import java.util.concurrent.TimeoutException;
  * @author Vincent Galloy
  *         Created by Vincent Galloy on 15/08/16.
  */
-public class ClientProxy<P extends RabbitMessage, R extends RabbitMessage> implements RPCQueueMethod<P, R> {
+public final class ClientProxy<P extends RabbitMessage, R extends RabbitMessage> implements RPCQueueMethod<P, R> {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(ClientProxy.class);
+
+    private final QueueDefinition<P, R> queueDefinition;
     private final Connection connection;
-    private final RPCQueue<P, R> rpcQueue;
 
     /**
      * Constructor.
      *
-     * @param connection the connection
-     * @param rpcQueue   the rpcQueue
+     * @param connection      the connection
+     * @param queueDefinition the queueDefinition
      */
-    public ClientProxy(Connection connection, RPCQueue<P, R> rpcQueue) {
+    public ClientProxy(Connection connection, QueueDefinition<P, R> queueDefinition) {
+        this.queueDefinition = Objects.requireNonNull(queueDefinition);
         this.connection = Objects.requireNonNull(connection);
-        this.rpcQueue = Objects.requireNonNull(rpcQueue);
     }
 
     @Override
     public R invoke(P parameter) {
-        byte[] objectAsByte = GsonMarshaller.INSTANCE.serialize(parameter);
-        byte[] resultAsByte = send(objectAsByte);
-        return GsonMarshaller.INSTANCE.deserialize(rpcQueue.getReturnMessageClass(), resultAsByte);
+        byte[] messageAsByte = GsonMarshaller.INSTANCE.serialize(parameter);
+        if (queueDefinition.getReturnMessageClass().equals(RabbitMessage.None.class)) {
+            sendOneWay(messageAsByte);
+            return null;
+        }
+        byte[] resultAsByte = sendRPC(messageAsByte, 1000);
+        return GsonMarshaller.INSTANCE.deserialize(queueDefinition.getReturnMessageClass(), resultAsByte);
+    }
+
+    /**
+     * Send the message.
+     *
+     * @param messageAsByte the message as byte array
+     */
+    private void sendOneWay(byte[] messageAsByte) {
+        try {
+            createChannel().basicPublish("", queueDefinition.getName(), null, messageAsByte);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**
      * Send the message and wait for the response.
      *
      * @param messageAsByte the message as byte array
+     * @param timeout       the timeout in millis. If the timeout is reach, an TimeOutException will be throw
      * @return the response as byte array
      */
-    private byte[] send(byte[] messageAsByte) {
+    private byte[] sendRPC(byte[] messageAsByte, long timeout) {
         Channel channel = null;
+        long startTimeMillis = System.currentTimeMillis();
+
         try {
-            channel = getChannel();
+            channel = createChannel();
             QueueingConsumer consumer = new QueueingConsumer(channel);
             String replyQueueName = channel.queueDeclare().getQueue();
             channel.basicConsume(replyQueueName, true, consumer);
@@ -61,19 +85,18 @@ public class ClientProxy<P extends RabbitMessage, R extends RabbitMessage> imple
                     .replyTo(replyQueueName)
                     .build();
 
-            channel.basicPublish("", rpcQueue.getName(), props, messageAsByte);
+            LOGGER.debug("send {}", messageAsByte);
+            channel.basicPublish("", queueDefinition.getName(), props, messageAsByte);
 
-            long time = System.currentTimeMillis();
-
-            while (true) { // TODO infinit wait
+            long time = timeout - (System.currentTimeMillis() - startTimeMillis);
+            while (time > 0) {
                 QueueingConsumer.Delivery delivery = consumer.nextDelivery();
                 if (delivery.getProperties().getCorrelationId().equals(corrId)) {
                     return delivery.getBody();
                 }
-                if (System.currentTimeMillis() - time > 1000) {
-                    throw new RuntimeException("Time out ... ");
-                }
+                time = timeout - (System.currentTimeMillis() - startTimeMillis);
             }
+            throw new RuntimeException("Time out ....");
         } catch (Exception e) {
             throw new RuntimeException(e);
         } finally {
@@ -81,7 +104,7 @@ public class ClientProxy<P extends RabbitMessage, R extends RabbitMessage> imple
                 try {
                     channel.close();
                 } catch (IOException | TimeoutException e) {
-                    e.printStackTrace();
+                    throw new RuntimeException(e);
                 }
             }
         }
@@ -93,9 +116,9 @@ public class ClientProxy<P extends RabbitMessage, R extends RabbitMessage> imple
      * @return the new chanel
      * @throws IOException if the channel can not be create
      */
-    private Channel getChannel() throws IOException {
+    private Channel createChannel() throws IOException {
         Channel channel = connection.createChannel();
-        channel.queueDeclare(rpcQueue.getName(), false, false, false, null);
+        channel.queueDeclare(queueDefinition.getName(), false, false, false, null);
         return channel;
     }
 }

@@ -1,6 +1,7 @@
-package vgalloy.javaoverrabbitmq.api.rpc;
+package vgalloy.javaoverrabbitmq.internal.queue;
 
-import vgalloy.javaoverrabbitmq.api.RabbitMessage;
+import vgalloy.javaoverrabbitmq.api.message.RabbitMessage;
+import vgalloy.javaoverrabbitmq.api.queue.QueueDefinition;
 
 import java.util.Objects;
 
@@ -8,7 +9,7 @@ import java.util.Objects;
  * @author Vincent Galloy
  *         Created by Vincent Galloy on 15/08/16.
  */
-public abstract class RPCQueue<P extends RabbitMessage, R extends RabbitMessage> {
+public class RPCQueueDefinition<P extends RabbitMessage, R extends RabbitMessage> implements QueueDefinition<P, R> {
 
     private final String name;
     private final Class<P> parameterMessageClass;
@@ -21,24 +22,27 @@ public abstract class RPCQueue<P extends RabbitMessage, R extends RabbitMessage>
      * @param parameterMessageClass the class representing the message send
      * @param returnMessageClass    the class representing the message received
      */
-    public RPCQueue(String name, Class<P> parameterMessageClass, Class<R> returnMessageClass) {
+    public RPCQueueDefinition(String name, Class<P> parameterMessageClass, Class<R> returnMessageClass) {
         this.name = Objects.requireNonNull(name);
         this.parameterMessageClass = Objects.requireNonNull(parameterMessageClass);
         this.returnMessageClass = Objects.requireNonNull(returnMessageClass);
 
         if (name.trim().isEmpty()) {
-            throw new IllegalArgumentException("RPCQueue name can not be empty");
+            throw new IllegalArgumentException("QueueDefinition name can not be empty");
         }
     }
 
+    @Override
     public String getName() {
         return name;
     }
 
+    @Override
     public Class<P> getParameterMessageClass() {
         return parameterMessageClass;
     }
 
+    @Override
     public Class<R> getReturnMessageClass() {
         return returnMessageClass;
     }

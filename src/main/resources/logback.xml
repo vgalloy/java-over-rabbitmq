@@ -7,7 +7,7 @@
         </encoder>
     </appender>
 
-    <logger name="vgalloy.riot.api" level="info"/>
+    <logger name="vgalloy.javaoverrabbitmq" level="debug"/>
 
     <root level="info">
         <appender-ref ref="STDOUT"/>

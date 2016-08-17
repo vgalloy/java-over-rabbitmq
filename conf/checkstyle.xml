@@ -149,7 +149,7 @@
         <module name="SimplifyBooleanExpression"/>
         <module name="SimplifyBooleanReturn"/>
 
-        <module name="InterfaceIsType"/>
+        <!--<module name="InterfaceIsType"/>-->
 
         <!-- Miscellaneous other checks.                                                               -->
         <module name="ArrayTypeStyle"/>

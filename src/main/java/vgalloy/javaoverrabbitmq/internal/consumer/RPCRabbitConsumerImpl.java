@@ -1,13 +1,16 @@
-package vgalloy.javaoverrabbitmq.internal.impl;
+package vgalloy.javaoverrabbitmq.internal.consumer;
 
 import com.rabbitmq.client.AMQP;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Envelope;
 import com.rabbitmq.client.QueueingConsumer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import vgalloy.javaoverrabbitmq.api.RabbitConsumer;
-import vgalloy.javaoverrabbitmq.api.RabbitMessage;
-import vgalloy.javaoverrabbitmq.api.rpc.RPCQueue;
+import vgalloy.javaoverrabbitmq.api.message.RabbitMessage;
+import vgalloy.javaoverrabbitmq.api.queue.QueueDefinition;
 import vgalloy.javaoverrabbitmq.api.rpc.RPCQueueMethod;
+import vgalloy.javaoverrabbitmq.internal.impl.GsonMarshaller;
 
 import java.io.IOException;
 import java.util.Objects;
@@ -17,28 +20,34 @@ import java.util.concurrent.TimeoutException;
  * @author Vincent Galloy
  *         Created by Vincent Galloy on 15/08/16.
  */
-public class RabbitConsumerImpl<P extends RabbitMessage, R extends RabbitMessage> extends QueueingConsumer implements RabbitConsumer {
+public final class RPCRabbitConsumerImpl<P extends RabbitMessage, R extends RabbitMessage> extends QueueingConsumer implements RabbitConsumer {
 
-    private final RPCQueue<P, R> rpcQueue;
+    private static final Logger LOGGER = LoggerFactory.getLogger(RPCRabbitConsumerImpl.class);
+
+    private final QueueDefinition<P, R> queueDefinition;
     private final RPCQueueMethod<P, R> service;
 
     /**
      * Constructor.
      *
-     * @param channel  the channel
-     * @param rpcQueue the rpcQueue
-     * @param service  the service implementation
+     * @param channel         the channel
+     * @param queueDefinition the queueDefinition
+     * @param service         the service implementation
      */
-    public RabbitConsumerImpl(Channel channel, RPCQueue<P, R> rpcQueue, RPCQueueMethod<P, R> service) {
+    public RPCRabbitConsumerImpl(Channel channel, QueueDefinition<P, R> queueDefinition, RPCQueueMethod<P, R> service) {
         super(channel);
-        this.rpcQueue = Objects.requireNonNull(rpcQueue);
+        this.queueDefinition = Objects.requireNonNull(queueDefinition);
         this.service = Objects.requireNonNull(service);
     }
 
     @Override
     public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, byte[] body)
             throws IOException {
-        P paramAsObject = GsonMarshaller.INSTANCE.deserialize(rpcQueue.getParameterMessageClass(), body);
+        LOGGER.debug("Received body : {}", body);
+
+        P paramAsObject = GsonMarshaller.INSTANCE.deserialize(queueDefinition.getParameterMessageClass(), body);
+        LOGGER.debug("Received paramAsObject : {}", paramAsObject);
+
         R result = service.invoke(paramAsObject);
 
         AMQP.BasicProperties replyProps = new AMQP.BasicProperties
