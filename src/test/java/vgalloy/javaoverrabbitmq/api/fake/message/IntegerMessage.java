@@ -1,14 +1,12 @@
 package vgalloy.javaoverrabbitmq.api.fake.message;
 
-import vgalloy.javaoverrabbitmq.api.message.RabbitMessage;
-
 import java.util.Objects;
 
 /**
  * @author Vincent Galloy
  *         Created by Vincent Galloy on 15/08/16.
  */
-public class IntegerMessage implements RabbitMessage {
+public class IntegerMessage {
 
     private final Integer first;
 

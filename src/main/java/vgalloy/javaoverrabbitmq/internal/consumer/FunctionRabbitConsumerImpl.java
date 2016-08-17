@@ -7,36 +7,35 @@ import com.rabbitmq.client.QueueingConsumer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import vgalloy.javaoverrabbitmq.api.RabbitConsumer;
-import vgalloy.javaoverrabbitmq.api.message.RabbitMessage;
-import vgalloy.javaoverrabbitmq.api.queue.QueueDefinition;
-import vgalloy.javaoverrabbitmq.api.rpc.RPCQueueMethod;
+import vgalloy.javaoverrabbitmq.api.queue.FunctionQueueDefinition;
 import vgalloy.javaoverrabbitmq.internal.impl.GsonMarshaller;
 
 import java.io.IOException;
 import java.util.Objects;
 import java.util.concurrent.TimeoutException;
+import java.util.function.Function;
 
 /**
  * @author Vincent Galloy
  *         Created by Vincent Galloy on 15/08/16.
  */
-public final class RPCRabbitConsumerImpl<P extends RabbitMessage, R extends RabbitMessage> extends QueueingConsumer implements RabbitConsumer {
+public final class FunctionRabbitConsumerImpl<P, R> extends QueueingConsumer implements RabbitConsumer {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(RPCRabbitConsumerImpl.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(FunctionRabbitConsumerImpl.class);
 
-    private final QueueDefinition<P, R> queueDefinition;
-    private final RPCQueueMethod<P, R> service;
+    private final FunctionQueueDefinition<P, R> functionQueueDefinition;
+    private final Function<P, R> service;
 
     /**
      * Constructor.
      *
-     * @param channel         the channel
-     * @param queueDefinition the queueDefinition
-     * @param service         the service implementation
+     * @param channel                 the channel
+     * @param functionQueueDefinition the functionQueueDefinition
+     * @param service                 the service implementation
      */
-    public RPCRabbitConsumerImpl(Channel channel, QueueDefinition<P, R> queueDefinition, RPCQueueMethod<P, R> service) {
+    public FunctionRabbitConsumerImpl(Channel channel, FunctionQueueDefinition<P, R> functionQueueDefinition, Function<P, R> service) {
         super(channel);
-        this.queueDefinition = Objects.requireNonNull(queueDefinition);
+        this.functionQueueDefinition = Objects.requireNonNull(functionQueueDefinition);
         this.service = Objects.requireNonNull(service);
     }
 
@@ -45,10 +44,10 @@ public final class RPCRabbitConsumerImpl<P extends RabbitMessage, R extends Rabb
             throws IOException {
         LOGGER.debug("Received body : {}", body);
 
-        P paramAsObject = GsonMarshaller.INSTANCE.deserialize(queueDefinition.getParameterMessageClass(), body);
+        P paramAsObject = GsonMarshaller.INSTANCE.deserialize(functionQueueDefinition.getParameterMessageClass(), body);
         LOGGER.debug("Received paramAsObject : {}", paramAsObject);
 
-        R result = service.invoke(paramAsObject);
+        R result = service.apply(paramAsObject);
 
         AMQP.BasicProperties replyProps = new AMQP.BasicProperties
                 .Builder()

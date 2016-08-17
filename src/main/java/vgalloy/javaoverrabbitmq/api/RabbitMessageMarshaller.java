@@ -23,5 +23,5 @@ public interface RabbitMessageMarshaller {
      * @param <M>   the type of the message
      * @return the message as an object
      */
-    <M> M deserialize(Class<M> clazz, byte[] bytes);
+    <M> M deserialize(Class<M> clazz, byte... bytes);
 }

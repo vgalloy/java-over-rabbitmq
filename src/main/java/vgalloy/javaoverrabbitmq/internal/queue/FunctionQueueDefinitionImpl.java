@@ -1,7 +1,6 @@
 package vgalloy.javaoverrabbitmq.internal.queue;
 
-import vgalloy.javaoverrabbitmq.api.message.RabbitMessage;
-import vgalloy.javaoverrabbitmq.api.queue.QueueDefinition;
+import vgalloy.javaoverrabbitmq.api.queue.FunctionQueueDefinition;
 
 import java.util.Objects;
 
@@ -9,7 +8,7 @@ import java.util.Objects;
  * @author Vincent Galloy
  *         Created by Vincent Galloy on 15/08/16.
  */
-public class RPCQueueDefinition<P extends RabbitMessage, R extends RabbitMessage> implements QueueDefinition<P, R> {
+public class FunctionQueueDefinitionImpl<P, R> implements FunctionQueueDefinition<P, R> {
 
     private final String name;
     private final Class<P> parameterMessageClass;
@@ -22,13 +21,13 @@ public class RPCQueueDefinition<P extends RabbitMessage, R extends RabbitMessage
      * @param parameterMessageClass the class representing the message send
      * @param returnMessageClass    the class representing the message received
      */
-    public RPCQueueDefinition(String name, Class<P> parameterMessageClass, Class<R> returnMessageClass) {
+    public FunctionQueueDefinitionImpl(String name, Class<P> parameterMessageClass, Class<R> returnMessageClass) {
         this.name = Objects.requireNonNull(name);
         this.parameterMessageClass = Objects.requireNonNull(parameterMessageClass);
         this.returnMessageClass = Objects.requireNonNull(returnMessageClass);
 
         if (name.trim().isEmpty()) {
-            throw new IllegalArgumentException("QueueDefinition name can not be empty");
+            throw new IllegalArgumentException("FunctionQueueDefinitionImpl name can not be empty");
         }
     }
 

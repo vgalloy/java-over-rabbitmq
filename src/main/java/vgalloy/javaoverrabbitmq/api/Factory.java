@@ -3,18 +3,20 @@ package vgalloy.javaoverrabbitmq.api;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
-import vgalloy.javaoverrabbitmq.api.message.RabbitMessage;
-import vgalloy.javaoverrabbitmq.api.queue.QueueDefinition;
-import vgalloy.javaoverrabbitmq.api.rpc.RPCQueueMethod;
-import vgalloy.javaoverrabbitmq.internal.consumer.RPCRabbitConsumerImpl;
-import vgalloy.javaoverrabbitmq.internal.consumer.SimpleRabbitConsumerImpl;
-import vgalloy.javaoverrabbitmq.internal.impl.ClientProxy;
-import vgalloy.javaoverrabbitmq.internal.queue.RPCQueueDefinition;
-import vgalloy.javaoverrabbitmq.internal.queue.SimpleQueueDefinition;
+import vgalloy.javaoverrabbitmq.api.queue.ConsumerQueueDefinition;
+import vgalloy.javaoverrabbitmq.api.queue.FunctionQueueDefinition;
+import vgalloy.javaoverrabbitmq.internal.consumer.FunctionRabbitConsumerImpl;
+import vgalloy.javaoverrabbitmq.internal.consumer.ConsumerRabbitConsumerImpl;
+import vgalloy.javaoverrabbitmq.internal.impl.ConsumerClientProxy;
+import vgalloy.javaoverrabbitmq.internal.impl.FunctionClientProxy;
+import vgalloy.javaoverrabbitmq.internal.queue.ConsumerQueueDefinitionImpl;
+import vgalloy.javaoverrabbitmq.internal.queue.FunctionQueueDefinitionImpl;
 
 import java.io.IOException;
 import java.util.Objects;
 import java.util.concurrent.TimeoutException;
+import java.util.function.Consumer;
+import java.util.function.Function;
 
 /**
  * @author Vincent Galloy
@@ -33,51 +35,83 @@ public final class Factory {
     /**
      * Create a proxy for remote invocation.
      *
-     * @param connectionFactory the connection factory
-     * @param queueDefinition   the QueueDefinition
-     * @param <P>               the parameter message
-     * @param <R>               the result message
+     * @param connectionFactory       the connection factory
+     * @param functionQueueDefinition the FunctionQueueDefinitionImpl
+     * @param <P>                     the parameter message
+     * @param <R>                     the result message
      * @return a proxy for remote call
      */
-    // TODO Replace Consumer && function
-    public static <P extends RabbitMessage, R extends RabbitMessage> RPCQueueMethod<P, R> createClient(ConnectionFactory connectionFactory, QueueDefinition<P, R> queueDefinition) {
+    public static <P, R> Function<P, R> createClient(ConnectionFactory connectionFactory, FunctionQueueDefinition<P, R> functionQueueDefinition) {
         Objects.requireNonNull(connectionFactory, "ConnectionFactory can not be null");
-        RPCQueueMethod<P, R> proxy;
         try {
-            proxy = new ClientProxy<>(connectionFactory.newConnection(), queueDefinition);
+            return new FunctionClientProxy<>(connectionFactory.newConnection(), functionQueueDefinition);
         } catch (IOException | TimeoutException e) {
             throw new RuntimeException("Can not get a connection", e);
         }
-        return proxy;
+    }
+
+    /**
+     * Create a proxy for remote invocation.
+     *
+     * @param connectionFactory       the connection factory
+     * @param consumerQueueDefinition the consumerQueueDefinition
+     * @param <P>                     the parameter message
+     * @return a proxy for remote call
+     */
+    public static <P> Consumer<P> createClient(ConnectionFactory connectionFactory, ConsumerQueueDefinition<P> consumerQueueDefinition) {
+        Objects.requireNonNull(connectionFactory, "ConnectionFactory can not be null");
+        try {
+            return new ConsumerClientProxy<>(connectionFactory.newConnection(), consumerQueueDefinition);
+        } catch (IOException | TimeoutException e) {
+            throw new RuntimeException("Can not get a connection", e);
+        }
     }
 
     /**
      * Create a consumer.
      *
-     * @param connectionFactory the connection factory
-     * @param queueDefinition   the QueueDefinition to connect
-     * @param implementation    the implementation
-     * @param <P>               the parameter message
-     * @param <R>               the result message
+     * @param connectionFactory       the connection factory
+     * @param functionQueueDefinition the FunctionQueueDefinitionImpl to connect
+     * @param implementation          the implementation
+     * @param <P>                     the parameter message
+     * @param <R>                     the result message
      * @return a rabbit consumer
      */
-    public static <P extends RabbitMessage, R extends RabbitMessage> RabbitConsumer createConsumer(ConnectionFactory connectionFactory, QueueDefinition<P, R> queueDefinition, RPCQueueMethod<P, R> implementation) {
+    public static <P, R> RabbitConsumer createConsumer(ConnectionFactory connectionFactory, FunctionQueueDefinition<P, R> functionQueueDefinition, Function<P, R> implementation) {
         Objects.requireNonNull(connectionFactory, "ConnectionFactory can not be null");
-        Objects.requireNonNull(queueDefinition, "QueueDefinition can not be null");
+        Objects.requireNonNull(functionQueueDefinition, "FunctionQueueDefinitionImpl can not be null");
         try {
             Connection connection = connectionFactory.newConnection();
             Channel channel = connection.createChannel();
             channel.basicQos(1);
-            channel.queueDeclare(queueDefinition.getName(), false, false, false, null);
-            if (queueDefinition.getReturnMessageClass().equals(RabbitMessage.None.class)) {
-                SimpleRabbitConsumerImpl<P> rabbitConsumer = new SimpleRabbitConsumerImpl<>(channel, (QueueDefinition<P, RabbitMessage.None>) queueDefinition, (RPCQueueMethod<P, RabbitMessage.None>) implementation);
-                channel.basicConsume(queueDefinition.getName(), false, rabbitConsumer);
-                return rabbitConsumer;
-            } else {
-                RPCRabbitConsumerImpl<P, R> rabbitConsumer = new RPCRabbitConsumerImpl<>(channel, queueDefinition, implementation);
-                channel.basicConsume(queueDefinition.getName(), false, rabbitConsumer);
-                return rabbitConsumer;
-            }
+            FunctionRabbitConsumerImpl<P, R> rabbitConsumer = new FunctionRabbitConsumerImpl<>(channel, functionQueueDefinition, implementation);
+            channel.basicConsume(functionQueueDefinition.getName(), false, rabbitConsumer);
+            return rabbitConsumer;
+        } catch (IOException | TimeoutException e) {
+            throw new RuntimeException("Can not get a connection", e);
+        }
+    }
+
+    /**
+     * Create a consumer.
+     *
+     * @param connectionFactory       the connection factory
+     * @param consumerQueueDefinition the consumerQueueDefinition to connect
+     * @param implementation          the implementation
+     * @param <P>                     the parameter message
+     * @return a rabbit consumer
+     */
+    public static <P> RabbitConsumer createConsumer(ConnectionFactory connectionFactory, ConsumerQueueDefinition<P> consumerQueueDefinition, Consumer<P> implementation) {
+        Objects.requireNonNull(connectionFactory, "ConnectionFactory can not be null");
+        Objects.requireNonNull(consumerQueueDefinition, "consumerQueueDefinition can not be null");
+        try {
+            Connection connection = connectionFactory.newConnection();
+            Channel channel = connection.createChannel();
+            channel.basicQos(1);
+            channel.queueDeclare(consumerQueueDefinition.getName(), false, false, false, null);
+            ConsumerRabbitConsumerImpl<P> rabbitConsumer = new ConsumerRabbitConsumerImpl<>(channel, consumerQueueDefinition, implementation);
+            channel.basicConsume(consumerQueueDefinition.getName(), false, rabbitConsumer);
+            return rabbitConsumer;
         } catch (IOException | TimeoutException e) {
             throw new RuntimeException("Can not get a connection", e);
         }
@@ -93,8 +127,8 @@ public final class Factory {
      * @param <R>                   the return type
      * @return the queue definition
      */
-    public static <P extends RabbitMessage, R extends RabbitMessage> QueueDefinition<P, R> createQueue(String name, Class<P> parameterMessageClass, Class<R> returnMessageClass) {
-        return new RPCQueueDefinition<>(name, parameterMessageClass, returnMessageClass);
+    public static <P, R> FunctionQueueDefinition<P, R> createQueue(String name, Class<P> parameterMessageClass, Class<R> returnMessageClass) {
+        return new FunctionQueueDefinitionImpl<>(name, parameterMessageClass, returnMessageClass);
     }
 
     /**
@@ -105,8 +139,8 @@ public final class Factory {
      * @param <P>                   the parameter type
      * @return the queue definition
      */
-    public static <P extends RabbitMessage> QueueDefinition<P, RabbitMessage.None> createQueue(String name, Class<P> parameterMessageClass) {
-        return new SimpleQueueDefinition<>(name, parameterMessageClass);
+    public static <P> ConsumerQueueDefinition<P> createQueue(String name, Class<P> parameterMessageClass) {
+        return new ConsumerQueueDefinitionImpl<>(name, parameterMessageClass);
     }
 }
 

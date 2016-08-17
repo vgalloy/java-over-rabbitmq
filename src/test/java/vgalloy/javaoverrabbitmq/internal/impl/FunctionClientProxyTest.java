@@ -10,9 +10,11 @@ import vgalloy.javaoverrabbitmq.api.fake.message.IntegerMessage;
 import vgalloy.javaoverrabbitmq.api.fake.method.RPCQueueMethodImpl;
 import vgalloy.javaoverrabbitmq.api.fake.method.SimpleQueueMethodImpl;
 import vgalloy.javaoverrabbitmq.api.fake.util.Utils;
-import vgalloy.javaoverrabbitmq.api.message.RabbitMessage;
-import vgalloy.javaoverrabbitmq.api.queue.QueueDefinition;
-import vgalloy.javaoverrabbitmq.api.rpc.RPCQueueMethod;
+import vgalloy.javaoverrabbitmq.api.queue.ConsumerQueueDefinition;
+import vgalloy.javaoverrabbitmq.api.queue.FunctionQueueDefinition;
+
+import java.util.function.Consumer;
+import java.util.function.Function;
 
 import static org.junit.Assert.assertEquals;
 
@@ -20,10 +22,10 @@ import static org.junit.Assert.assertEquals;
  * @author Vincent Galloy
  *         Created by Vincent Galloy on 15/08/16.
  */
-public class ClientProxyTest {
+public class FunctionClientProxyTest {
 
-    private final QueueDefinition<DoubleIntegerMessage, IntegerMessage> fakeQueueDefinition = Factory.createQueue("FAKE_QUEUE_NAME", DoubleIntegerMessage.class, IntegerMessage.class);
-    private final QueueDefinition<IntegerMessage, RabbitMessage.None> fakeQueueDefinition2 = Factory.createQueue("FAKE_QUEUE_NAME_2", IntegerMessage.class);
+    private final FunctionQueueDefinition<DoubleIntegerMessage, IntegerMessage> fakeFunctionQueueDefinition = Factory.createQueue("FAKE_QUEUE_NAME", DoubleIntegerMessage.class, IntegerMessage.class);
+    private final ConsumerQueueDefinition<IntegerMessage> fakeFunctionQueueDefinition2 = Factory.createQueue("FAKE_QUEUE_NAME_2", IntegerMessage.class);
 
     private SimpleQueueMethodImpl simpleQueueMethod;
     private RabbitConsumer rabbitConsumer;
@@ -32,8 +34,8 @@ public class ClientProxyTest {
     @Before
     public void tearUp() {
         simpleQueueMethod = new SimpleQueueMethodImpl();
-        rabbitConsumer = Factory.createConsumer(Utils.getConnectionFactory(), fakeQueueDefinition, new RPCQueueMethodImpl());
-        rabbitConsumer2 = Factory.createConsumer(Utils.getConnectionFactory(), fakeQueueDefinition2, simpleQueueMethod);
+        rabbitConsumer = Factory.createConsumer(Utils.getConnectionFactory(), fakeFunctionQueueDefinition, new RPCQueueMethodImpl());
+        rabbitConsumer2 = Factory.createConsumer(Utils.getConnectionFactory(), fakeFunctionQueueDefinition2, simpleQueueMethod);
     }
 
     @After
@@ -44,22 +46,19 @@ public class ClientProxyTest {
 
     @Test
     public void simpleRPCTest() {
-        RPCQueueMethod<DoubleIntegerMessage, IntegerMessage> remote = Factory.createClient(Utils.getConnectionFactory(), fakeQueueDefinition);
-        assertEquals(new IntegerMessage(3), remote.invoke(new DoubleIntegerMessage(1, 2)));
+        Function<DoubleIntegerMessage, IntegerMessage> remote = Factory.createClient(Utils.getConnectionFactory(), fakeFunctionQueueDefinition);
+        assertEquals(new IntegerMessage(3), remote.apply(new DoubleIntegerMessage(1, 2)));
     }
 
     @Test
     public void simpleTest() throws Exception {
-        RPCQueueMethod<IntegerMessage, RabbitMessage.None> remote = Factory.createClient(Utils.getConnectionFactory(), fakeQueueDefinition2);
-        remote.invoke(new IntegerMessage(1));
+        Consumer<IntegerMessage> remote = Factory.createClient(Utils.getConnectionFactory(), fakeFunctionQueueDefinition2);
+        remote.accept(new IntegerMessage(1));
 
         synchronized (simpleQueueMethod) {
-            System.err.println("Je suis dans le lock");
             if (simpleQueueMethod.getValue() == 1) {
-                System.err.println("Je suis bon");
                 assertEquals(1, simpleQueueMethod.getValue());
             } else {
-                System.err.println("Je wait ...");
                 simpleQueueMethod.wait(500);
             }
         }
