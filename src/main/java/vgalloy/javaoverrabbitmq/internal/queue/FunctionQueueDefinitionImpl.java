@@ -13,6 +13,7 @@ public class FunctionQueueDefinitionImpl<P, R> implements FunctionQueueDefinitio
     private final String name;
     private final Class<P> parameterMessageClass;
     private final Class<R> returnMessageClass;
+    private long timeoutMillis = 1_000;
 
     /**
      * Constructor.
@@ -44,5 +45,15 @@ public class FunctionQueueDefinitionImpl<P, R> implements FunctionQueueDefinitio
     @Override
     public Class<R> getReturnMessageClass() {
         return returnMessageClass;
+    }
+
+    @Override
+    public void setTimeout(long timeoutMillis) {
+        this.timeoutMillis = timeoutMillis;
+    }
+
+    @Override
+    public long getTimeout() {
+        return timeoutMillis;
     }
 }

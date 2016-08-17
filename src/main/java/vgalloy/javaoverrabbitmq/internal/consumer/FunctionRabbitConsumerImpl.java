@@ -1,19 +1,20 @@
 package vgalloy.javaoverrabbitmq.internal.consumer;
 
+import java.io.IOException;
+import java.util.Objects;
+import java.util.concurrent.TimeoutException;
+import java.util.function.Function;
+
 import com.rabbitmq.client.AMQP;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Envelope;
 import com.rabbitmq.client.QueueingConsumer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import vgalloy.javaoverrabbitmq.api.RabbitConsumer;
 import vgalloy.javaoverrabbitmq.api.queue.FunctionQueueDefinition;
-import vgalloy.javaoverrabbitmq.internal.impl.GsonMarshaller;
-
-import java.io.IOException;
-import java.util.Objects;
-import java.util.concurrent.TimeoutException;
-import java.util.function.Function;
+import vgalloy.javaoverrabbitmq.internal.marshaller.GsonMarshaller;
 
 /**
  * @author Vincent Galloy
@@ -47,16 +48,23 @@ public final class FunctionRabbitConsumerImpl<P, R> extends QueueingConsumer imp
         P paramAsObject = GsonMarshaller.INSTANCE.deserialize(functionQueueDefinition.getParameterMessageClass(), body);
         LOGGER.debug("Received paramAsObject : {}", paramAsObject);
 
-        R result = service.apply(paramAsObject);
-
         AMQP.BasicProperties replyProps = new AMQP.BasicProperties
                 .Builder()
                 .correlationId(properties.getCorrelationId())
                 .build();
 
-        byte[] resultAsByte = GsonMarshaller.INSTANCE.serialize(result);
+        try {
+            R result = service.apply(paramAsObject);
 
-        getChannel().basicPublish("", properties.getReplyTo(), replyProps, resultAsByte);
+
+
+            byte[] resultAsByte = GsonMarshaller.INSTANCE.serialize(result);
+
+            getChannel().basicPublish("", properties.getReplyTo(), replyProps, resultAsByte);
+        } catch (Exception e) {
+            LOGGER.error("{}", e);
+            getChannel().basicPublish("", properties.getReplyTo(), replyProps, null);
+        }
         getChannel().basicAck(envelope.getDeliveryTag(), false);
     }
 

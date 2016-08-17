@@ -7,8 +7,8 @@ import vgalloy.javaoverrabbitmq.api.queue.ConsumerQueueDefinition;
 import vgalloy.javaoverrabbitmq.api.queue.FunctionQueueDefinition;
 import vgalloy.javaoverrabbitmq.internal.consumer.FunctionRabbitConsumerImpl;
 import vgalloy.javaoverrabbitmq.internal.consumer.ConsumerRabbitConsumerImpl;
-import vgalloy.javaoverrabbitmq.internal.impl.ConsumerClientProxy;
-import vgalloy.javaoverrabbitmq.internal.impl.FunctionClientProxy;
+import vgalloy.javaoverrabbitmq.internal.client.ConsumerClientProxy;
+import vgalloy.javaoverrabbitmq.internal.client.FunctionClientProxy;
 import vgalloy.javaoverrabbitmq.internal.queue.ConsumerQueueDefinitionImpl;
 import vgalloy.javaoverrabbitmq.internal.queue.FunctionQueueDefinitionImpl;
 
@@ -83,6 +83,7 @@ public final class Factory {
         try {
             Connection connection = connectionFactory.newConnection();
             Channel channel = connection.createChannel();
+            channel.queueDeclare(functionQueueDefinition.getName(), false, false, false, null);
             channel.basicQos(1);
             FunctionRabbitConsumerImpl<P, R> rabbitConsumer = new FunctionRabbitConsumerImpl<>(channel, functionQueueDefinition, implementation);
             channel.basicConsume(functionQueueDefinition.getName(), false, rabbitConsumer);
@@ -107,6 +108,7 @@ public final class Factory {
         try {
             Connection connection = connectionFactory.newConnection();
             Channel channel = connection.createChannel();
+            channel.queueDeclare(consumerQueueDefinition.getName(), false, false, false, null);
             channel.basicQos(1);
             channel.queueDeclare(consumerQueueDefinition.getName(), false, false, false, null);
             ConsumerRabbitConsumerImpl<P> rabbitConsumer = new ConsumerRabbitConsumerImpl<>(channel, consumerQueueDefinition, implementation);

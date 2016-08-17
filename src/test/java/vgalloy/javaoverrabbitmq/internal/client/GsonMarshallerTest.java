@@ -1,8 +1,9 @@
-package vgalloy.javaoverrabbitmq.internal.impl;
+package vgalloy.javaoverrabbitmq.internal.client;
 
 import com.google.gson.Gson;
 import org.junit.Test;
 import vgalloy.javaoverrabbitmq.api.fake.message.DoubleIntegerMessage;
+import vgalloy.javaoverrabbitmq.internal.marshaller.GsonMarshaller;
 
 import static org.junit.Assert.assertEquals;
 

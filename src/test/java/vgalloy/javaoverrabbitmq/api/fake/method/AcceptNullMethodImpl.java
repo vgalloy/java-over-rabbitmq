@@ -1,26 +1,26 @@
 package vgalloy.javaoverrabbitmq.api.fake.method;
 
-import vgalloy.javaoverrabbitmq.api.fake.message.IntegerMessage;
-
 import java.util.function.Consumer;
+
+import vgalloy.javaoverrabbitmq.api.fake.message.IntegerMessage;
 
 /**
  * @author Vincent Galloy
  *         Created by Vincent Galloy on 17/08/16.
  */
-public class SimpleQueueMethodImpl implements Consumer<IntegerMessage> {
+public class AcceptNullMethodImpl implements Consumer<IntegerMessage> {
 
-    private int value = 0;
+    private Boolean ok;
 
     @Override
     public void accept(IntegerMessage integerMessage) {
         synchronized (this) {
-            value = integerMessage.getFirst();
+            ok = integerMessage == null;
             notifyAll();
         }
     }
 
-    public int getValue() {
-        return value;
+    public Boolean getOk() {
+        return ok;
     }
 }

@@ -1,7 +1,6 @@
-package vgalloy.javaoverrabbitmq.internal.impl;
+package vgalloy.javaoverrabbitmq.internal.marshaller;
 
 import com.google.gson.Gson;
-import vgalloy.javaoverrabbitmq.api.RabbitMessageMarshaller;
 
 /**
  * @author Vincent Galloy

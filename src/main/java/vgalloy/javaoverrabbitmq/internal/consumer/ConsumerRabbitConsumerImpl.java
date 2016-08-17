@@ -8,7 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import vgalloy.javaoverrabbitmq.api.RabbitConsumer;
 import vgalloy.javaoverrabbitmq.api.queue.ConsumerQueueDefinition;
-import vgalloy.javaoverrabbitmq.internal.impl.GsonMarshaller;
+import vgalloy.javaoverrabbitmq.internal.marshaller.GsonMarshaller;
 
 import java.io.IOException;
 import java.util.Objects;
@@ -46,7 +46,11 @@ public final class ConsumerRabbitConsumerImpl<P> extends QueueingConsumer implem
         P paramAsObject = GsonMarshaller.INSTANCE.deserialize(consumerQueueDefinition.getParameterMessageClass(), body);
         LOGGER.debug("Received paramAsObject : {}", paramAsObject);
 
-        service.accept(paramAsObject);
+        try {
+            service.accept(paramAsObject);
+        } catch (Exception e) {
+            LOGGER.error("{}", e);
+        }
         LOGGER.debug("basicAck");
         getChannel().basicAck(envelope.getDeliveryTag(), false);
     }

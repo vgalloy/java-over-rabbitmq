@@ -1,8 +1,9 @@
-package vgalloy.javaoverrabbitmq.internal.impl;
+package vgalloy.javaoverrabbitmq.internal.client;
 
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import vgalloy.javaoverrabbitmq.api.queue.ConsumerQueueDefinition;
+import vgalloy.javaoverrabbitmq.internal.marshaller.GsonMarshaller;
 
 import java.io.IOException;
 import java.util.Objects;

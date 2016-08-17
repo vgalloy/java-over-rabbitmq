@@ -1,4 +1,9 @@
-package vgalloy.javaoverrabbitmq.internal.impl;
+package vgalloy.javaoverrabbitmq.internal.client;
+
+import java.io.IOException;
+import java.util.Objects;
+import java.util.UUID;
+import java.util.function.Function;
 
 import com.rabbitmq.client.AMQP;
 import com.rabbitmq.client.Channel;
@@ -6,13 +11,11 @@ import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.QueueingConsumer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import vgalloy.javaoverrabbitmq.api.queue.FunctionQueueDefinition;
 
-import java.io.IOException;
-import java.util.Objects;
-import java.util.UUID;
-import java.util.concurrent.TimeoutException;
-import java.util.function.Function;
+import vgalloy.javaoverrabbitmq.api.queue.FunctionQueueDefinition;
+import vgalloy.javaoverrabbitmq.internal.exception.JavaOverRabbitException;
+import vgalloy.javaoverrabbitmq.internal.exception.TimeoutException;
+import vgalloy.javaoverrabbitmq.internal.marshaller.GsonMarshaller;
 
 /**
  * @author Vincent Galloy
@@ -39,7 +42,7 @@ public final class FunctionClientProxy<P, R> implements Function<P, R> {
     @Override
     public R apply(P parameter) {
         byte[] messageAsByte = GsonMarshaller.INSTANCE.serialize(parameter);
-        byte[] resultAsByte = sendRPC(messageAsByte, 1000);
+        byte[] resultAsByte = sendRPC(messageAsByte);
         return GsonMarshaller.INSTANCE.deserialize(functionQueueDefinition.getReturnMessageClass(), resultAsByte);
     }
 
@@ -47,10 +50,9 @@ public final class FunctionClientProxy<P, R> implements Function<P, R> {
      * Send the message and wait for the response.
      *
      * @param messageAsByte the message as byte array
-     * @param timeout       the timeout in millis. If the timeout is reach, an TimeOutException will be throw
      * @return the response as byte array
      */
-    private byte[] sendRPC(byte[] messageAsByte, long timeout) {
+    private byte[] sendRPC(byte[] messageAsByte) {
         Channel channel = null;
         long startTimeMillis = System.currentTimeMillis();
 
@@ -70,23 +72,23 @@ public final class FunctionClientProxy<P, R> implements Function<P, R> {
             LOGGER.debug("send {}", messageAsByte);
             channel.basicPublish("", functionQueueDefinition.getName(), props, messageAsByte);
 
-            long time = timeout - (System.currentTimeMillis() - startTimeMillis);
-            while (time > 0) {
-                QueueingConsumer.Delivery delivery = consumer.nextDelivery();
-                if (delivery.getProperties().getCorrelationId().equals(corrId)) {
+            long remainingTime = functionQueueDefinition.getTimeout() - (System.currentTimeMillis() - startTimeMillis);
+            while (remainingTime > 0) {
+                QueueingConsumer.Delivery delivery = consumer.nextDelivery(remainingTime);
+                if (delivery != null && delivery.getProperties().getCorrelationId().equals(corrId)) {
                     return delivery.getBody();
                 }
-                time = timeout - (System.currentTimeMillis() - startTimeMillis);
+                remainingTime = functionQueueDefinition.getTimeout() - (System.currentTimeMillis() - startTimeMillis);
             }
-            throw new RuntimeException("Time out ....");
+            throw new TimeoutException(functionQueueDefinition.getTimeout() + "  msec without valid response");
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new JavaOverRabbitException(e);
         } finally {
             if (channel != null) {
                 try {
                     channel.close();
-                } catch (IOException | TimeoutException e) {
-                    throw new RuntimeException(e);
+                } catch (Exception e) {
+                    throw new JavaOverRabbitException(e);
                 }
             }
         }
