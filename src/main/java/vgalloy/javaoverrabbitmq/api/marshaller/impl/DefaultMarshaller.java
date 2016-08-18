@@ -1,6 +1,6 @@
 package vgalloy.javaoverrabbitmq.api.marshaller.impl;
 
-import vgalloy.javaoverrabbitmq.internal.exception.JavaOverRabbitException;
+import vgalloy.javaoverrabbitmq.api.exception.JavaOverRabbitException;
 import vgalloy.javaoverrabbitmq.api.marshaller.RabbitMessageMarshaller;
 
 import java.io.ByteArrayInputStream;

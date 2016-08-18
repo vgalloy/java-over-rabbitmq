@@ -1,4 +1,4 @@
-package vgalloy.javaoverrabbitmq.internal.exception;
+package vgalloy.javaoverrabbitmq.api.exception;
 
 /**
  * @author Vincent Galloy

@@ -4,7 +4,7 @@ import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.QueueingConsumer;
 import vgalloy.javaoverrabbitmq.api.RabbitConsumer;
 import vgalloy.javaoverrabbitmq.api.queue.UntypedQueue;
-import vgalloy.javaoverrabbitmq.internal.exception.JavaOverRabbitException;
+import vgalloy.javaoverrabbitmq.api.exception.JavaOverRabbitException;
 
 import java.io.IOException;
 import java.util.Objects;

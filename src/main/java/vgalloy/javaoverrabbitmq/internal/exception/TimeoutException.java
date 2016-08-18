@@ -1,5 +1,7 @@
 package vgalloy.javaoverrabbitmq.internal.exception;
 
+import vgalloy.javaoverrabbitmq.api.exception.JavaOverRabbitException;
+
 /**
  * @author Vincent Galloy
  *         Created by Vincent Galloy on 17/08/16.

@@ -9,7 +9,7 @@ import vgalloy.javaoverrabbitmq.internal.client.ConsumerClientProxy;
 import vgalloy.javaoverrabbitmq.internal.client.FunctionClientProxy;
 import vgalloy.javaoverrabbitmq.internal.consumer.ConsumerRabbitConsumerImpl;
 import vgalloy.javaoverrabbitmq.internal.consumer.FunctionRabbitConsumerImpl;
-import vgalloy.javaoverrabbitmq.internal.exception.JavaOverRabbitException;
+import vgalloy.javaoverrabbitmq.api.exception.JavaOverRabbitException;
 import vgalloy.javaoverrabbitmq.internal.queue.ConsumerQueueDefinitionImpl;
 import vgalloy.javaoverrabbitmq.internal.queue.FunctionQueueDefinitionImpl;
 

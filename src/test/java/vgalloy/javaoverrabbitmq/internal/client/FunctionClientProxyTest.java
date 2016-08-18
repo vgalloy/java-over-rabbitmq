@@ -8,7 +8,7 @@ import vgalloy.javaoverrabbitmq.api.fake.message.IntegerMessage;
 import vgalloy.javaoverrabbitmq.api.fake.method.FunctionMethodImpl;
 import vgalloy.javaoverrabbitmq.api.fake.util.Utils;
 import vgalloy.javaoverrabbitmq.api.queue.FunctionQueueDefinition;
-import vgalloy.javaoverrabbitmq.internal.exception.JavaOverRabbitException;
+import vgalloy.javaoverrabbitmq.api.exception.JavaOverRabbitException;
 import vgalloy.javaoverrabbitmq.util.TestUtil;
 
 import java.util.function.Function;

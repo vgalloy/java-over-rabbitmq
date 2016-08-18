@@ -7,7 +7,7 @@ import com.rabbitmq.client.QueueingConsumer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import vgalloy.javaoverrabbitmq.api.queue.FunctionQueueDefinition;
-import vgalloy.javaoverrabbitmq.internal.exception.JavaOverRabbitException;
+import vgalloy.javaoverrabbitmq.api.exception.JavaOverRabbitException;
 import vgalloy.javaoverrabbitmq.internal.exception.RabbitConsumerException;
 import vgalloy.javaoverrabbitmq.internal.exception.TimeoutException;
 import vgalloy.javaoverrabbitmq.internal.marshaller.impl.ExtendedMarshaller;
