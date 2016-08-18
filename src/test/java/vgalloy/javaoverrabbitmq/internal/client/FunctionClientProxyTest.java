@@ -1,5 +1,8 @@
 package vgalloy.javaoverrabbitmq.internal.client;
 
+import org.apache.qpid.server.Broker;
+import org.junit.After;
+import org.junit.Before;
 import java.util.function.Function;
 
 import com.rabbitmq.client.AlreadyClosedException;
@@ -27,7 +30,19 @@ import static org.junit.Assert.fail;
  * @author Vincent Galloy
  *         Created by Vincent Galloy on 15/08/16.
  */
-public class FunctionClientProxyITest {
+public class FunctionClientProxyTest {
+
+    private Broker broker;
+
+    @Before
+    public void tearUp() {
+        broker = BrokerUtils.startEmbeddedBroker();
+    }
+
+    @After
+    public void tearDown() {
+        broker.shutdown();
+    }
 
     @Test
     public void testSimpleRPC() {

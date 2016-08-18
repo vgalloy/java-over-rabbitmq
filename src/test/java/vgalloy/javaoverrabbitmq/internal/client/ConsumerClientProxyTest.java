@@ -2,6 +2,11 @@ package vgalloy.javaoverrabbitmq.internal.client;
 
 import java.util.function.Consumer;
 
+import org.apache.qpid.server.Broker;
+import org.junit.After;
+import org.junit.Before;
+import java.util.function.Consumer;
+
 import com.rabbitmq.client.AlreadyClosedException;
 import org.junit.Assert;
 import org.junit.Test;
@@ -20,7 +25,19 @@ import vgalloy.javaoverrabbitmq.utils.util.TestUtil;
  * @author Vincent Galloy
  *         Created by Vincent Galloy on 17/08/16.
  */
-public class ConsumerClientProxyITest {
+public class ConsumerClientProxyTest {
+
+    private Broker broker;
+
+    @Before
+    public void tearUp() {
+        broker = BrokerUtils.startEmbeddedBroker();
+    }
+
+    @After
+    public void tearDown() {
+        broker.shutdown();
+    }
 
     @Test
     public void testSimple() throws Exception {
@@ -77,12 +94,13 @@ public class ConsumerClientProxyITest {
         Assert.assertEquals(0, rabbitConsumer2.getMessageCount());
         remote.accept(new IntegerMessage(1));
         remote.accept(new IntegerMessage(1));
-        Assert.assertEquals(1, rabbitConsumer2.getMessageCount());
-        Assert.assertEquals(1, remote.getMessageCount());
+        Thread.sleep(100);
+        Assert.assertTrue(0 < rabbitConsumer2.getMessageCount());
+        Assert.assertTrue(0 < remote.getMessageCount());
         remote.accept(new IntegerMessage(1));
         remote.accept(new IntegerMessage(1));
-        Assert.assertEquals(3, rabbitConsumer2.getMessageCount());
-        Assert.assertEquals(3, remote.getMessageCount());
+        Assert.assertTrue(3 < rabbitConsumer2.getMessageCount());
+        Assert.assertTrue(3 < remote.getMessageCount());
 
         rabbitConsumer2.close();
         remote.close();
