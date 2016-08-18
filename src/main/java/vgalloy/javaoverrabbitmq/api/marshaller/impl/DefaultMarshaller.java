@@ -20,7 +20,7 @@ public final class DefaultMarshaller implements RabbitMessageMarshaller {
 
     /**
      * Constructor.
-     * <p>
+     *
      * To prevent external instantiation.
      */
     private DefaultMarshaller() {
@@ -28,7 +28,6 @@ public final class DefaultMarshaller implements RabbitMessageMarshaller {
 
     @Override
     public <T> byte[] serialize(T message) {
-        byte[] bytes;
         ByteArrayOutputStream byteArrayOutputStream = null;
         ObjectOutputStream oos = null;
         try {
@@ -37,42 +36,37 @@ public final class DefaultMarshaller implements RabbitMessageMarshaller {
             oos.writeObject(message);
             oos.flush();
             oos.reset();
-            bytes = byteArrayOutputStream.toByteArray();
-            oos.close();
-            byteArrayOutputStream.close();
+            return byteArrayOutputStream.toByteArray();
         } catch (IOException e) {
             throw new JavaOverRabbitException(e);
         } finally {
             closeSilently(byteArrayOutputStream);
             closeSilently(oos);
         }
-        return bytes;
     }
 
     @Override
     public <T> T deserialize(Class<T> clazz, byte[] bytes) {
-        T obj;
         ByteArrayInputStream bis = null;
         ObjectInputStream ois = null;
         try {
             bis = new ByteArrayInputStream(bytes);
             ois = new ObjectInputStream(bis);
-            obj = (T) ois.readObject();
+            return  (T) ois.readObject();
         } catch (Exception e) {
             throw new JavaOverRabbitException(e);
         } finally {
             closeSilently(bis);
             closeSilently(ois);
         }
-        return obj;
     }
 
     /**
-     * Close the closable. Throw a {@link JavaOverRabbitException} if error occurred
+     * Close the closable. Throw a {@link JavaOverRabbitException} if error occurred.
      *
      * @param closeable the closable, can be null
      */
-    private void closeSilently(Closeable closeable) {
+    private static void closeSilently(Closeable closeable) {
         if (closeable != null) {
             try {
                 closeable.close();

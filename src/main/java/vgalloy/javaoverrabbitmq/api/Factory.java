@@ -109,7 +109,6 @@ public final class Factory {
             Channel channel = connection.createChannel();
             channel.queueDeclare(consumerQueueDefinition.getName(), false, false, false, null);
             channel.basicQos(1);
-            channel.queueDeclare(consumerQueueDefinition.getName(), false, false, false, null);
             return new ConsumerRabbitConsumerImpl<>(channel, consumerQueueDefinition, implementation);
         } catch (IOException | TimeoutException e) {
             throw new JavaOverRabbitException("Can not get a connection", e);

@@ -5,6 +5,7 @@ import vgalloy.javaoverrabbitmq.api.Factory;
 import vgalloy.javaoverrabbitmq.api.RabbitConsumer;
 import vgalloy.javaoverrabbitmq.api.exception.JavaOverRabbitException;
 import vgalloy.javaoverrabbitmq.api.queue.FunctionQueueDefinition;
+import vgalloy.javaoverrabbitmq.internal.exception.TimeoutException;
 import vgalloy.javaoverrabbitmq.utils.fake.message.DoubleIntegerMessage;
 import vgalloy.javaoverrabbitmq.utils.fake.message.IntegerMessage;
 import vgalloy.javaoverrabbitmq.utils.fake.method.FunctionMethodImpl;
@@ -51,7 +52,14 @@ public class FunctionClientProxyITest {
         queueDefinition.setTimeout(1000);
         RabbitConsumer rabbitConsumer = Factory.createConsumer(BrokerUtils.getConnectionFactory(), queueDefinition, function);
         Function<DoubleIntegerMessage, IntegerMessage> remote = Factory.createClient(BrokerUtils.getConnectionFactory(), queueDefinition);
-        Runnable runnable = () -> remote.apply(new DoubleIntegerMessage(1, 2));
+        Runnable runnable = () -> {
+            try {
+                remote.apply(new DoubleIntegerMessage(1, 2));
+                fail("No TimeoutException");
+            } catch (JavaOverRabbitException e) {
+                assertTrue(e.getCause() instanceof TimeoutException);
+            }
+        };
         Thread thread = new Thread(runnable);
 
         // WHEN
