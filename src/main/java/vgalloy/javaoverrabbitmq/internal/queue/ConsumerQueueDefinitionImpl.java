@@ -8,9 +8,8 @@ import java.util.Objects;
  * @author Vincent Galloy
  *         Created by Vincent Galloy on 17/08/16.
  */
-public final class ConsumerQueueDefinitionImpl<P> implements ConsumerQueueDefinition<P> {
+public final class ConsumerQueueDefinitionImpl<P> extends AbstractQueueDefinition implements ConsumerQueueDefinition<P> {
 
-    private final String name;
     private final Class<P> parameterMessageClass;
 
     /**
@@ -20,17 +19,8 @@ public final class ConsumerQueueDefinitionImpl<P> implements ConsumerQueueDefini
      * @param parameterMessageClass the class representing the message send
      */
     public ConsumerQueueDefinitionImpl(String name, Class<P> parameterMessageClass) {
-        this.name = Objects.requireNonNull(name);
+        super(name);
         this.parameterMessageClass = Objects.requireNonNull(parameterMessageClass);
-
-        if (name.trim().isEmpty()) {
-            throw new IllegalArgumentException("FunctionQueueDefinitionImpl name can not be empty");
-        }
-    }
-
-    @Override
-    public String getName() {
-        return name;
     }
 
     @Override

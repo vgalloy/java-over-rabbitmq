@@ -6,7 +6,6 @@ import com.rabbitmq.client.Envelope;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import vgalloy.javaoverrabbitmq.api.queue.ConsumerQueueDefinition;
-import vgalloy.javaoverrabbitmq.internal.marshaller.impl.GsonMarshaller;
 
 import java.io.IOException;
 import java.util.Objects;
@@ -16,7 +15,7 @@ import java.util.function.Consumer;
  * @author Vincent Galloy
  *         Created by Vincent Galloy on 17/08/16.
  */
-public final class ConsumerRabbitConsumerImpl<P> extends AbstractRabbitConsumer<P> {
+public final class ConsumerRabbitConsumerImpl<P> extends AbstractRabbitConsumer {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ConsumerRabbitConsumerImpl.class);
     private final ConsumerQueueDefinition<P> consumerQueueDefinition;
@@ -41,7 +40,7 @@ public final class ConsumerRabbitConsumerImpl<P> extends AbstractRabbitConsumer<
         try {
             LOGGER.debug("Received body : {}", body);
 
-            P paramAsObject = GsonMarshaller.INSTANCE.deserialize(consumerQueueDefinition.getParameterMessageClass(), body);
+            P paramAsObject = consumerQueueDefinition.getMarshaller().deserialize(consumerQueueDefinition.getParameterMessageClass(), body);
             LOGGER.debug("Received paramAsObject : {}", paramAsObject);
             service.accept(paramAsObject);
         } catch (Exception e) {

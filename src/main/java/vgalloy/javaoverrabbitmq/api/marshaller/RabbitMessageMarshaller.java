@@ -1,4 +1,4 @@
-package vgalloy.javaoverrabbitmq.internal.marshaller;
+package vgalloy.javaoverrabbitmq.api.marshaller;
 
 /**
  * @author Vincent Galloy

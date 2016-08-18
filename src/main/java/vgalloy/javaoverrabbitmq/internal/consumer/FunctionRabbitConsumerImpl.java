@@ -7,7 +7,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import vgalloy.javaoverrabbitmq.api.queue.FunctionQueueDefinition;
 import vgalloy.javaoverrabbitmq.internal.exception.RabbitConsumerException;
-import vgalloy.javaoverrabbitmq.internal.marshaller.impl.GsonMarshaller;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -19,7 +18,7 @@ import java.util.function.Function;
  * @author Vincent Galloy
  *         Created by Vincent Galloy on 15/08/16.
  */
-public final class FunctionRabbitConsumerImpl<P, R> extends AbstractRabbitConsumer<P> {
+public final class FunctionRabbitConsumerImpl<P, R> extends AbstractRabbitConsumer {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(FunctionRabbitConsumerImpl.class);
 
@@ -46,11 +45,11 @@ public final class FunctionRabbitConsumerImpl<P, R> extends AbstractRabbitConsum
         try {
             LOGGER.debug("Received body : {}", body);
 
-            P paramAsObject = GsonMarshaller.INSTANCE.deserialize(functionQueueDefinition.getParameterMessageClass(), body);
+            P paramAsObject = functionQueueDefinition.getMarshaller().deserialize(functionQueueDefinition.getParameterMessageClass(), body);
             LOGGER.debug("Received paramAsObject : {}", paramAsObject);
 
             R result = service.apply(paramAsObject);
-            byte[] resultAsByte = GsonMarshaller.INSTANCE.serialize(result);
+            byte[] resultAsByte = functionQueueDefinition.getMarshaller().serialize(result);
 
             AMQP.BasicProperties replyProps = new AMQP.BasicProperties.Builder()
                     .correlationId(properties.getCorrelationId())
@@ -64,7 +63,7 @@ public final class FunctionRabbitConsumerImpl<P, R> extends AbstractRabbitConsum
                     .headers(map)
                     .correlationId(properties.getCorrelationId())
                     .build();
-            byte[] resultAsByte = GsonMarshaller.INSTANCE.serialize(new RabbitConsumerException(e.getMessage()));
+            byte[] resultAsByte = functionQueueDefinition.getMarshaller().serialize(new RabbitConsumerException(e.getMessage()));
             getChannel().basicPublish("", properties.getReplyTo(), replyProps, resultAsByte);
         }
         getChannel().basicAck(envelope.getDeliveryTag(), false);

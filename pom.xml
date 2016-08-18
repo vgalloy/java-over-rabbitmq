@@ -6,7 +6,7 @@
 
     <groupId>vgalloy</groupId>
     <artifactId>java-over-rabbitmq</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0.0-SNAPSHOT</version>
 
     <properties>
         <!-- Project -->
@@ -49,6 +49,7 @@
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
             <version>${gson.version}</version>
+            <scope>test</scope>
         </dependency>
 
         <!-- Log -->

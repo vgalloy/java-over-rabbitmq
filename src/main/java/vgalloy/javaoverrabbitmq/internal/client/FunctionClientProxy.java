@@ -10,8 +10,7 @@ import vgalloy.javaoverrabbitmq.api.queue.FunctionQueueDefinition;
 import vgalloy.javaoverrabbitmq.internal.exception.JavaOverRabbitException;
 import vgalloy.javaoverrabbitmq.internal.exception.RabbitConsumerException;
 import vgalloy.javaoverrabbitmq.internal.exception.TimeoutException;
-import vgalloy.javaoverrabbitmq.internal.marshaller.impl.GlobalMarshaller;
-import vgalloy.javaoverrabbitmq.internal.marshaller.impl.GsonMarshaller;
+import vgalloy.javaoverrabbitmq.internal.marshaller.impl.ExtendedMarshaller;
 
 import java.util.Objects;
 import java.util.UUID;
@@ -21,7 +20,7 @@ import java.util.function.Function;
  * @author Vincent Galloy
  *         Created by Vincent Galloy on 15/08/16.
  */
-public final class FunctionClientProxy<P, R> extends AbstractClient<P> implements Function<P, R> {
+public final class FunctionClientProxy<P, R> extends AbstractClient implements Function<P, R> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(FunctionClientProxy.class);
 
@@ -40,7 +39,7 @@ public final class FunctionClientProxy<P, R> extends AbstractClient<P> implement
 
     @Override
     public R apply(P parameter) {
-        byte[] messageAsByte = GsonMarshaller.INSTANCE.serialize(parameter);
+        byte[] messageAsByte = functionQueueDefinition.getMarshaller().serialize(parameter);
         return sendRPC(messageAsByte);
     }
 
@@ -98,7 +97,7 @@ public final class FunctionClientProxy<P, R> extends AbstractClient<P> implement
             QueueingConsumer.Delivery delivery = consumer.nextDelivery(remainingTime);
             if (delivery != null && delivery.getProperties().getCorrelationId().equals(corrId)) {
                 boolean isError = delivery.getProperties().getHeaders() != null && delivery.getProperties().getHeaders().containsKey(RabbitConsumerException.ERROR_HEADER);
-                return GlobalMarshaller.INSTANCE.deserialize(functionQueueDefinition.getReturnMessageClass(), isError, delivery.getBody());
+                return ExtendedMarshaller.deserialize(functionQueueDefinition.getMarshaller(), functionQueueDefinition.getReturnMessageClass(), isError, delivery.getBody());
             }
             remainingTime = functionQueueDefinition.getTimeout() - (System.currentTimeMillis() - startTimeMillis);
         }

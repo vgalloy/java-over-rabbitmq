@@ -2,7 +2,7 @@ package vgalloy.javaoverrabbitmq.internal.client;
 
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
-import vgalloy.javaoverrabbitmq.api.queue.QueueDefinition;
+import vgalloy.javaoverrabbitmq.api.queue.UntypedQueue;
 
 import java.io.IOException;
 import java.util.Objects;
@@ -11,19 +11,19 @@ import java.util.Objects;
  * @author Vincent Galloy
  *         Created by Vincent Galloy on 18/08/16.
  */
-public abstract class AbstractClient<P> {
+public abstract class AbstractClient {
 
-    private final QueueDefinition<P> queueDefinition;
+    private final UntypedQueue untypedQueue;
     private final Connection connection;
 
     /**
      * Constructor.
      *
-     * @param queueDefinition the queue definition
-     * @param connection      the connection
+     * @param untypedQueue the queue name
+     * @param connection the connection
      */
-    protected AbstractClient(QueueDefinition<P> queueDefinition, Connection connection) {
-        this.queueDefinition = Objects.requireNonNull(queueDefinition);
+    protected AbstractClient(UntypedQueue untypedQueue, Connection connection) {
+        this.untypedQueue = Objects.requireNonNull(untypedQueue);
         this.connection = Objects.requireNonNull(connection);
     }
 
@@ -35,7 +35,7 @@ public abstract class AbstractClient<P> {
      */
     protected Channel createChannel() throws IOException {
         Channel channel = connection.createChannel();
-        channel.queueDeclare(queueDefinition.getName(), false, false, false, null);
+        channel.queueDeclare(untypedQueue.getName(), false, false, false, null);
         return channel;
     }
 }

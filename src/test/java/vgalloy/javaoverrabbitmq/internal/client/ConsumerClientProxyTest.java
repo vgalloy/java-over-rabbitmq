@@ -3,6 +3,7 @@ package vgalloy.javaoverrabbitmq.internal.client;
 import org.junit.Test;
 import vgalloy.javaoverrabbitmq.api.Factory;
 import vgalloy.javaoverrabbitmq.api.RabbitConsumer;
+import vgalloy.javaoverrabbitmq.api.fake.marshaller.GsonMarshaller;
 import vgalloy.javaoverrabbitmq.api.fake.message.IntegerMessage;
 import vgalloy.javaoverrabbitmq.api.fake.method.AcceptNullMethodImpl;
 import vgalloy.javaoverrabbitmq.api.fake.method.SimpleConsumerImpl;
@@ -25,6 +26,7 @@ public class ConsumerClientProxyTest {
     public void testSimple() throws Exception {
         // GIVEN
         ConsumerQueueDefinition<IntegerMessage> queueDefinition = Factory.createQueue(TestUtil.getRandomQueueName(), IntegerMessage.class);
+        queueDefinition.setMarshaller(GsonMarshaller.INSTANCE);
         SimpleConsumerImpl simpleQueueMethod = new SimpleConsumerImpl();
         RabbitConsumer rabbitConsumer2 = Factory.createConsumer(Utils.getConnectionFactory(), queueDefinition, simpleQueueMethod);
 

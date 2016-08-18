@@ -1,13 +1,15 @@
 package vgalloy.javaoverrabbitmq.api.fake.message;
 
+import java.io.Serializable;
 import java.util.Objects;
 
 /**
  * @author Vincent Galloy
  *         Created by Vincent Galloy on 15/08/16.
  */
-public class IntegerMessage {
+public class IntegerMessage implements Serializable {
 
+    private static final long serialVersionUID = -3163238809514047823L;
     private final Integer first;
 
     public IntegerMessage(Integer first) {

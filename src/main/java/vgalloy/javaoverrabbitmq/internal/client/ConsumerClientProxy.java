@@ -3,7 +3,6 @@ package vgalloy.javaoverrabbitmq.internal.client;
 import com.rabbitmq.client.Connection;
 import vgalloy.javaoverrabbitmq.api.queue.ConsumerQueueDefinition;
 import vgalloy.javaoverrabbitmq.internal.exception.JavaOverRabbitException;
-import vgalloy.javaoverrabbitmq.internal.marshaller.impl.GsonMarshaller;
 
 import java.io.IOException;
 import java.util.Objects;
@@ -13,7 +12,7 @@ import java.util.function.Consumer;
  * @author Vincent Galloy
  *         Created by Vincent Galloy on 15/08/16.
  */
-public final class ConsumerClientProxy<P> extends AbstractClient<P> implements Consumer<P> {
+public final class ConsumerClientProxy<P> extends AbstractClient implements Consumer<P> {
 
     private final ConsumerQueueDefinition<P> consumerQueueDefinition;
 
@@ -30,7 +29,7 @@ public final class ConsumerClientProxy<P> extends AbstractClient<P> implements C
 
     @Override
     public void accept(P parameter) {
-        byte[] messageAsByte = GsonMarshaller.INSTANCE.serialize(parameter);
+        byte[] messageAsByte = consumerQueueDefinition.getMarshaller().serialize(parameter);
         sendOneWay(messageAsByte);
     }
 
