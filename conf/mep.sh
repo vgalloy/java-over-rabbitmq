@@ -5,6 +5,7 @@ DEFAULT="\e[39m"
 YELLOW="\e[93m"
 GREEN="\e[32m"
 BLUE="\e[34m"
+RED="\e[91m"
 
 CURRENT=`pwd`
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
@@ -35,11 +36,15 @@ echo -ne $BLUE"Commiting ... "$DEFAULT
 git commit -am "[ UPD ] : Update version to $new_version"
 echo -e $GREEN"OK"$DEFAULT
 
-echo -ne $BLUE"tagging ... "$DEFAULT
-git tag $new_version
+echo -ne $BLUE"Building ... "$DEFAULT
+cd ..
+mvn clean install || exit 1
+cd $DIR
 echo -e $GREEN"OK"$DEFAULT
 
-#(cd .. && mvn clean install -DskipTests)
+echo -ne $BLUE"Tagging ... "$DEFAULT
+git tag $new_version
+echo -e $GREEN"OK"$DEFAULT
 
 echo -ne $BLUE"Compute new version : "$DEFAULT
 new_version_snapshot=$maj.$(($min+1)).0-SNAPSHOT
@@ -56,5 +61,7 @@ echo -ne $BLUE"Commiting ... "$DEFAULT
 git commit -am "[ UPD ] : Update version to $new_version_snapshot"
 echo -e $GREEN"OK"$DEFAULT
 
-
 cd $CURRENT
+
+
+
