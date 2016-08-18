@@ -1,4 +1,4 @@
-package vgalloy.javaoverrabbitmq.util;
+package vgalloy.javaoverrabbitmq.utils.util;
 
 import java.security.SecureRandom;
 import java.util.Random;

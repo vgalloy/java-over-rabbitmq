@@ -1,4 +1,4 @@
-package vgalloy.javaoverrabbitmq.api.fake.util;
+package vgalloy.javaoverrabbitmq.utils.util;
 
 import com.rabbitmq.client.ConnectionFactory;
 
@@ -6,18 +6,18 @@ import com.rabbitmq.client.ConnectionFactory;
  * @author Vincent Galloy
  *         Created by Vincent Galloy on 15/08/16.
  */
-public final class Utils {
+public final class BrokerUtils {
 
-    private Utils() {
+    private BrokerUtils() {
         throw new IllegalStateException();
     }
 
     public static ConnectionFactory getConnectionFactory() {
         ConnectionFactory factory = new ConnectionFactory();
         factory.setHost("localhost");
-        factory.setPort(29003);
-        factory.setUsername("root");
         factory.setPassword("root");
+        factory.setUsername("root");
+        factory.setPort(29003);
         return factory;
     }
 }

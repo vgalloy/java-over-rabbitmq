@@ -1,4 +1,4 @@
-package vgalloy.javaoverrabbitmq.api.fake.message;
+package vgalloy.javaoverrabbitmq.utils.fake.message;
 
 import java.io.Serializable;
 import java.util.Objects;

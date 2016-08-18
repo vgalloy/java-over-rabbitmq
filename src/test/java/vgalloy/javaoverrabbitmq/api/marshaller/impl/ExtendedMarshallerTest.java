@@ -1,8 +1,8 @@
 package vgalloy.javaoverrabbitmq.api.marshaller.impl;
 
 import org.junit.Test;
-import vgalloy.javaoverrabbitmq.api.fake.marshaller.GsonMarshaller;
-import vgalloy.javaoverrabbitmq.api.fake.message.DoubleIntegerMessage;
+import vgalloy.javaoverrabbitmq.utils.fake.marshaller.GsonMarshaller;
+import vgalloy.javaoverrabbitmq.utils.fake.message.DoubleIntegerMessage;
 import vgalloy.javaoverrabbitmq.api.marshaller.RabbitMessageMarshaller;
 import vgalloy.javaoverrabbitmq.internal.exception.RabbitConsumerException;
 import vgalloy.javaoverrabbitmq.internal.exception.RabbitRemoteException;
