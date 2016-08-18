@@ -1,5 +1,10 @@
 #!/bin/bash
 
+CURRENT=`pwd`
+
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+cd DIR
+
 version=$(grep "<version>" ../pom.xml | head -n 1 | cut -d '>' -f2 | cut -d '<' -f1) 
 maj=$(echo $version | cut -d '.' -f1)
 min=$(echo $version | cut -d '.' -f2)
@@ -23,3 +28,5 @@ sed -i "s/$new_version/$new_version_snapshot/g" ../pom.xml
 git add Jenkinsfile.release
 git commit -am "[ UPD ] : Update version to $new_version_snapshot"
 
+
+cd $CURRENT
