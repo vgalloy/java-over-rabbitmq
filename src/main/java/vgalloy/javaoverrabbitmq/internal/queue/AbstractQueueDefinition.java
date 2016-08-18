@@ -34,12 +34,12 @@ public abstract class AbstractQueueDefinition implements UntypedQueue {
     }
 
     @Override
-    public void setMarshaller(RabbitMessageMarshaller rabbitMessageMarshaller) {
-        this.rabbitMessageMarshaller = Objects.requireNonNull(rabbitMessageMarshaller);
+    public RabbitMessageMarshaller getMarshaller() {
+        return rabbitMessageMarshaller;
     }
 
     @Override
-    public RabbitMessageMarshaller getMarshaller() {
-        return rabbitMessageMarshaller;
+    public void setMarshaller(RabbitMessageMarshaller rabbitMessageMarshaller) {
+        this.rabbitMessageMarshaller = Objects.requireNonNull(rabbitMessageMarshaller);
     }
 }

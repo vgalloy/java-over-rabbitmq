@@ -12,6 +12,7 @@ public final class ExtendedMarshaller {
 
     /**
      * Constructor.
+     * <p>
      * To prevent instantiation
      */
     private ExtendedMarshaller() {

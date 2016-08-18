@@ -2,10 +2,10 @@ package vgalloy.javaoverrabbitmq.api.marshaller.impl;
 
 import com.google.gson.Gson;
 import org.junit.Test;
+import vgalloy.javaoverrabbitmq.api.marshaller.RabbitMessageMarshaller;
 import vgalloy.javaoverrabbitmq.utils.fake.marshaller.GsonMarshaller;
 import vgalloy.javaoverrabbitmq.utils.fake.message.DoubleIntegerMessage;
 import vgalloy.javaoverrabbitmq.utils.fake.message.IntegerMessage;
-import vgalloy.javaoverrabbitmq.api.marshaller.RabbitMessageMarshaller;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;

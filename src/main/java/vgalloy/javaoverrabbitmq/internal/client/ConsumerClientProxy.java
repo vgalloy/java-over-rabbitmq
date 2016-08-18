@@ -1,8 +1,8 @@
 package vgalloy.javaoverrabbitmq.internal.client;
 
 import com.rabbitmq.client.Connection;
-import vgalloy.javaoverrabbitmq.api.queue.ConsumerQueueDefinition;
 import vgalloy.javaoverrabbitmq.api.exception.JavaOverRabbitException;
+import vgalloy.javaoverrabbitmq.api.queue.ConsumerQueueDefinition;
 
 import java.io.IOException;
 import java.util.Objects;

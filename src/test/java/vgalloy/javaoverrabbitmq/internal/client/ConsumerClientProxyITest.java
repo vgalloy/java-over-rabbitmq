@@ -3,12 +3,12 @@ package vgalloy.javaoverrabbitmq.internal.client;
 import org.junit.Test;
 import vgalloy.javaoverrabbitmq.api.Factory;
 import vgalloy.javaoverrabbitmq.api.RabbitConsumer;
+import vgalloy.javaoverrabbitmq.api.queue.ConsumerQueueDefinition;
 import vgalloy.javaoverrabbitmq.utils.fake.marshaller.GsonMarshaller;
 import vgalloy.javaoverrabbitmq.utils.fake.message.IntegerMessage;
 import vgalloy.javaoverrabbitmq.utils.fake.method.AcceptNullMethodImpl;
 import vgalloy.javaoverrabbitmq.utils.fake.method.SimpleConsumerImpl;
 import vgalloy.javaoverrabbitmq.utils.util.BrokerUtils;
-import vgalloy.javaoverrabbitmq.api.queue.ConsumerQueueDefinition;
 import vgalloy.javaoverrabbitmq.utils.util.TestUtil;
 
 import java.util.function.Consumer;

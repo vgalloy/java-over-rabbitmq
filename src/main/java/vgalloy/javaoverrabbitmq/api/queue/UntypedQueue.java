@@ -16,16 +16,16 @@ public interface UntypedQueue {
     String getName();
 
     /**
-     * Set a marshaller for this queue. Can not be null. For default marshaller use {@link vgalloy.javaoverrabbitmq.api.marshaller.impl.DefaultMarshaller}
-     *
-     * @param rabbitMessageMarshaller the marshaller
-     */
-    void setMarshaller(RabbitMessageMarshaller rabbitMessageMarshaller);
-
-    /**
      * Get the marshaller.
      *
      * @return the marshaller
      */
     RabbitMessageMarshaller getMarshaller();
+
+    /**
+     * Set a marshaller for this queue. Can not be null. For default marshaller use {@link vgalloy.javaoverrabbitmq.api.marshaller.impl.DefaultMarshaller}
+     *
+     * @param rabbitMessageMarshaller the marshaller
+     */
+    void setMarshaller(RabbitMessageMarshaller rabbitMessageMarshaller);
 }

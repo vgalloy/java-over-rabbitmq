@@ -3,8 +3,8 @@ package vgalloy.javaoverrabbitmq.internal.consumer;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.QueueingConsumer;
 import vgalloy.javaoverrabbitmq.api.RabbitConsumer;
-import vgalloy.javaoverrabbitmq.api.queue.UntypedQueue;
 import vgalloy.javaoverrabbitmq.api.exception.JavaOverRabbitException;
+import vgalloy.javaoverrabbitmq.api.queue.UntypedQueue;
 
 import java.io.IOException;
 import java.util.Objects;
@@ -21,7 +21,7 @@ public abstract class AbstractRabbitConsumer extends QueueingConsumer implements
     /**
      * Constructor.
      *
-     * @param channel    the channel
+     * @param channel      the channel
      * @param untypedQueue the queue name
      */
     protected AbstractRabbitConsumer(Channel channel, UntypedQueue untypedQueue) {

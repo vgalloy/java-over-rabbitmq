@@ -3,13 +3,13 @@ package vgalloy.javaoverrabbitmq.api;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
+import vgalloy.javaoverrabbitmq.api.exception.JavaOverRabbitException;
 import vgalloy.javaoverrabbitmq.api.queue.ConsumerQueueDefinition;
 import vgalloy.javaoverrabbitmq.api.queue.FunctionQueueDefinition;
 import vgalloy.javaoverrabbitmq.internal.client.ConsumerClientProxy;
 import vgalloy.javaoverrabbitmq.internal.client.FunctionClientProxy;
 import vgalloy.javaoverrabbitmq.internal.consumer.ConsumerRabbitConsumerImpl;
 import vgalloy.javaoverrabbitmq.internal.consumer.FunctionRabbitConsumerImpl;
-import vgalloy.javaoverrabbitmq.api.exception.JavaOverRabbitException;
 import vgalloy.javaoverrabbitmq.internal.queue.ConsumerQueueDefinitionImpl;
 import vgalloy.javaoverrabbitmq.internal.queue.FunctionQueueDefinitionImpl;
 

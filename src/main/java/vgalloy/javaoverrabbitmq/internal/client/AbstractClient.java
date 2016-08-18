@@ -20,7 +20,7 @@ public abstract class AbstractClient {
      * Constructor.
      *
      * @param untypedQueue the queue name
-     * @param connection the connection
+     * @param connection   the connection
      */
     protected AbstractClient(UntypedQueue untypedQueue, Connection connection) {
         this.untypedQueue = Objects.requireNonNull(untypedQueue);
