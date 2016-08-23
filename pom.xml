@@ -27,7 +27,7 @@
         <amqp-client.version>3.6.3</amqp-client.version>
 
         <!-- Gson -->
-        <version>${gson.version}</version>
+        <gson.version>2.7</gson.version>
 
         <!-- Log -->
         <slf4j-api.version>1.7.7</slf4j-api.version>
@@ -35,7 +35,6 @@
 
         <!-- Test -->
         <junit.version>4.12</junit.version>
-        <gson.version>2.7</gson.version>
     </properties>
 
     <dependencies>
