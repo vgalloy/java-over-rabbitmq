@@ -1,14 +1,14 @@
 package vgalloy.javaoverrabbitmq.api.marshaller.impl;
 
-import vgalloy.javaoverrabbitmq.api.exception.JavaOverRabbitException;
-import vgalloy.javaoverrabbitmq.api.marshaller.RabbitMessageMarshaller;
-
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+
+import vgalloy.javaoverrabbitmq.api.exception.JavaOverRabbitException;
+import vgalloy.javaoverrabbitmq.api.marshaller.RabbitMessageMarshaller;
 
 /**
  * @author Vincent Galloy
@@ -20,10 +20,25 @@ public final class DefaultMarshaller implements RabbitMessageMarshaller {
 
     /**
      * Constructor.
-     *
+     * <p>
      * To prevent external instantiation.
      */
     private DefaultMarshaller() {
+    }
+
+    /**
+     * Close the closable. Throw a {@link JavaOverRabbitException} if error occurred.
+     *
+     * @param closeable the closable, can be null
+     */
+    private static void closeSilently(Closeable closeable) {
+        if (closeable != null) {
+            try {
+                closeable.close();
+            } catch (IOException e) {
+                throw new JavaOverRabbitException(e);
+            }
+        }
     }
 
     @Override
@@ -52,27 +67,12 @@ public final class DefaultMarshaller implements RabbitMessageMarshaller {
         try {
             bis = new ByteArrayInputStream(bytes);
             ois = new ObjectInputStream(bis);
-            return  (T) ois.readObject();
+            return (T) ois.readObject();
         } catch (Exception e) {
             throw new JavaOverRabbitException(e);
         } finally {
             closeSilently(bis);
             closeSilently(ois);
-        }
-    }
-
-    /**
-     * Close the closable. Throw a {@link JavaOverRabbitException} if error occurred.
-     *
-     * @param closeable the closable, can be null
-     */
-    private static void closeSilently(Closeable closeable) {
-        if (closeable != null) {
-            try {
-                closeable.close();
-            } catch (IOException e) {
-                throw new JavaOverRabbitException(e);
-            }
         }
     }
 }

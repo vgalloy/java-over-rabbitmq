@@ -1,6 +1,7 @@
 package vgalloy.javaoverrabbitmq.utils.fake.marshaller;
 
 import com.google.gson.Gson;
+
 import vgalloy.javaoverrabbitmq.api.marshaller.RabbitMessageMarshaller;
 
 /**

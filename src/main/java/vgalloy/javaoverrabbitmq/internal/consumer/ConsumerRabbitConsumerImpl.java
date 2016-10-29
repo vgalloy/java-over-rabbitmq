@@ -1,15 +1,16 @@
 package vgalloy.javaoverrabbitmq.internal.consumer;
 
+import java.io.IOException;
+import java.util.Objects;
+import java.util.function.Consumer;
+
 import com.rabbitmq.client.AMQP;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Envelope;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import vgalloy.javaoverrabbitmq.api.queue.ConsumerQueueDefinition;
 
-import java.io.IOException;
-import java.util.Objects;
-import java.util.function.Consumer;
+import vgalloy.javaoverrabbitmq.api.queue.ConsumerQueueDefinition;
 
 /**
  * @author Vincent Galloy
@@ -18,6 +19,7 @@ import java.util.function.Consumer;
 public final class ConsumerRabbitConsumerImpl<P> extends AbstractRabbitConsumer {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ConsumerRabbitConsumerImpl.class);
+
     private final ConsumerQueueDefinition<P> consumerQueueDefinition;
     private final Consumer<P> service;
 
@@ -39,7 +41,6 @@ public final class ConsumerRabbitConsumerImpl<P> extends AbstractRabbitConsumer 
             throws IOException {
         try {
             LOGGER.debug("Received body : {}", body);
-
             P paramAsObject = consumerQueueDefinition.getMarshaller().deserialize(consumerQueueDefinition.getParameterMessageClass(), body);
             LOGGER.debug("Received paramAsObject : {}", paramAsObject);
             service.accept(paramAsObject);

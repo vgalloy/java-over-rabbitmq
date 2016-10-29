@@ -1,14 +1,14 @@
 package vgalloy.javaoverrabbitmq.internal.queue;
 
-import vgalloy.javaoverrabbitmq.api.queue.FunctionQueueDefinition;
-
 import java.util.Objects;
+
+import vgalloy.javaoverrabbitmq.api.queue.FunctionQueueDefinition;
 
 /**
  * @author Vincent Galloy
  *         Created by Vincent Galloy on 15/08/16.
  */
-public class FunctionQueueDefinitionImpl<P, R> extends AbstractQueueDefinition implements FunctionQueueDefinition<P, R> {
+public final class FunctionQueueDefinitionImpl<P, R> extends AbstractQueueDefinition implements FunctionQueueDefinition<P, R> {
 
     private final Class<P> parameterMessageClass;
     private final Class<R> returnMessageClass;

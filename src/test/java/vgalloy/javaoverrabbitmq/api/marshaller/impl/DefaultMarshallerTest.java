@@ -1,6 +1,7 @@
 package vgalloy.javaoverrabbitmq.api.marshaller.impl;
 
 import org.junit.Test;
+
 import vgalloy.javaoverrabbitmq.api.marshaller.RabbitMessageMarshaller;
 import vgalloy.javaoverrabbitmq.utils.fake.message.DoubleIntegerMessage;
 import vgalloy.javaoverrabbitmq.utils.fake.message.IntegerMessage;

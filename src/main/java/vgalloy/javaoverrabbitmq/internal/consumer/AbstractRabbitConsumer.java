@@ -1,14 +1,15 @@
 package vgalloy.javaoverrabbitmq.internal.consumer;
 
-import com.rabbitmq.client.Channel;
-import com.rabbitmq.client.QueueingConsumer;
-import vgalloy.javaoverrabbitmq.api.RabbitConsumer;
-import vgalloy.javaoverrabbitmq.api.exception.JavaOverRabbitException;
-import vgalloy.javaoverrabbitmq.api.queue.UntypedQueue;
-
 import java.io.IOException;
 import java.util.Objects;
 import java.util.concurrent.TimeoutException;
+
+import com.rabbitmq.client.Channel;
+import com.rabbitmq.client.QueueingConsumer;
+
+import vgalloy.javaoverrabbitmq.api.RabbitConsumer;
+import vgalloy.javaoverrabbitmq.api.exception.JavaOverRabbitException;
+import vgalloy.javaoverrabbitmq.api.queue.UntypedQueue;
 
 /**
  * @author Vincent Galloy
@@ -39,7 +40,7 @@ public abstract class AbstractRabbitConsumer extends QueueingConsumer implements
             getChannel().basicCancel(consumerTag);
             getChannel().close();
         } catch (IOException | TimeoutException e) {
-            throw new RuntimeException(e);
+            throw new JavaOverRabbitException("Can not close consumer", e);
         }
     }
 }

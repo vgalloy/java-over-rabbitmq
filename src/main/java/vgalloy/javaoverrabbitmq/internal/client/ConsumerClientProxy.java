@@ -1,12 +1,14 @@
 package vgalloy.javaoverrabbitmq.internal.client;
 
-import com.rabbitmq.client.Connection;
-import vgalloy.javaoverrabbitmq.api.exception.JavaOverRabbitException;
-import vgalloy.javaoverrabbitmq.api.queue.ConsumerQueueDefinition;
-
 import java.io.IOException;
 import java.util.Objects;
 import java.util.function.Consumer;
+
+import com.rabbitmq.client.Channel;
+import com.rabbitmq.client.Connection;
+
+import vgalloy.javaoverrabbitmq.api.exception.JavaOverRabbitException;
+import vgalloy.javaoverrabbitmq.api.queue.ConsumerQueueDefinition;
 
 /**
  * @author Vincent Galloy
@@ -39,10 +41,20 @@ public final class ConsumerClientProxy<P> extends AbstractClient implements Cons
      * @param messageAsByte the message as byte array
      */
     private void sendOneWay(byte... messageAsByte) {
+        Channel channel = null;
         try {
-            createChannel().basicPublish("", consumerQueueDefinition.getName(), null, messageAsByte);
+            channel = createChannel();
+            channel.basicPublish("", consumerQueueDefinition.getName(), null, messageAsByte);
         } catch (IOException e) {
             throw new JavaOverRabbitException(e);
+        } finally {
+            if (channel != null) {
+                try {
+                    channel.close();
+                } catch (Exception e) {
+                    throw new JavaOverRabbitException(e);
+                }
+            }
         }
     }
 }

@@ -1,6 +1,9 @@
 package vgalloy.javaoverrabbitmq.internal.client;
 
+import java.util.function.Function;
+
 import org.junit.Test;
+
 import vgalloy.javaoverrabbitmq.api.Factory;
 import vgalloy.javaoverrabbitmq.api.RabbitConsumer;
 import vgalloy.javaoverrabbitmq.api.exception.JavaOverRabbitException;
@@ -11,8 +14,6 @@ import vgalloy.javaoverrabbitmq.utils.fake.message.IntegerMessage;
 import vgalloy.javaoverrabbitmq.utils.fake.method.FunctionMethodImpl;
 import vgalloy.javaoverrabbitmq.utils.util.BrokerUtils;
 import vgalloy.javaoverrabbitmq.utils.util.TestUtil;
-
-import java.util.function.Function;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;

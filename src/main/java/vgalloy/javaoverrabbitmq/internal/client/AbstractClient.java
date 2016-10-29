@@ -1,11 +1,12 @@
 package vgalloy.javaoverrabbitmq.internal.client;
 
-import com.rabbitmq.client.Channel;
-import com.rabbitmq.client.Connection;
-import vgalloy.javaoverrabbitmq.api.queue.UntypedQueue;
-
 import java.io.IOException;
 import java.util.Objects;
+
+import com.rabbitmq.client.Channel;
+import com.rabbitmq.client.Connection;
+
+import vgalloy.javaoverrabbitmq.api.queue.UntypedQueue;
 
 /**
  * @author Vincent Galloy

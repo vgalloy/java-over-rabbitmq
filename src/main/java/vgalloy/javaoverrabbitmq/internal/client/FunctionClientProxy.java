@@ -1,20 +1,21 @@
 package vgalloy.javaoverrabbitmq.internal.client;
 
+import java.util.Objects;
+import java.util.UUID;
+import java.util.function.Function;
+
 import com.rabbitmq.client.AMQP;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.QueueingConsumer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import vgalloy.javaoverrabbitmq.api.exception.JavaOverRabbitException;
 import vgalloy.javaoverrabbitmq.api.queue.FunctionQueueDefinition;
 import vgalloy.javaoverrabbitmq.internal.exception.RabbitConsumerException;
 import vgalloy.javaoverrabbitmq.internal.exception.TimeoutException;
 import vgalloy.javaoverrabbitmq.internal.marshaller.impl.ExtendedMarshaller;
-
-import java.util.Objects;
-import java.util.UUID;
-import java.util.function.Function;
 
 /**
  * @author Vincent Galloy

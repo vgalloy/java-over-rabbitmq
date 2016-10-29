@@ -1,8 +1,8 @@
 package vgalloy.javaoverrabbitmq.internal.queue;
 
-import vgalloy.javaoverrabbitmq.api.queue.ConsumerQueueDefinition;
-
 import java.util.Objects;
+
+import vgalloy.javaoverrabbitmq.api.queue.ConsumerQueueDefinition;
 
 /**
  * @author Vincent Galloy

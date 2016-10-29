@@ -1,10 +1,10 @@
 package vgalloy.javaoverrabbitmq.internal.queue;
 
+import java.util.Objects;
+
 import vgalloy.javaoverrabbitmq.api.marshaller.RabbitMessageMarshaller;
 import vgalloy.javaoverrabbitmq.api.marshaller.impl.DefaultMarshaller;
 import vgalloy.javaoverrabbitmq.api.queue.UntypedQueue;
-
-import java.util.Objects;
 
 /**
  * @author Vincent Galloy
@@ -20,7 +20,7 @@ public abstract class AbstractQueueDefinition implements UntypedQueue {
      *
      * @param name the queue name
      */
-    public AbstractQueueDefinition(String name) {
+    protected AbstractQueueDefinition(String name) {
         this.name = Objects.requireNonNull(name);
 
         if (name.trim().isEmpty()) {

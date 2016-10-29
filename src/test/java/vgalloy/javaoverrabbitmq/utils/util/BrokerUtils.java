@@ -17,7 +17,7 @@ public final class BrokerUtils {
         factory.setHost("localhost");
         factory.setPassword("root");
         factory.setUsername("root");
-        factory.setPort(29003);
+        factory.setPort(29002);
         return factory;
     }
 }

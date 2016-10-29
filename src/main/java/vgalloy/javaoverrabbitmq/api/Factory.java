@@ -1,8 +1,15 @@
 package vgalloy.javaoverrabbitmq.api;
 
+import java.io.IOException;
+import java.util.Objects;
+import java.util.concurrent.TimeoutException;
+import java.util.function.Consumer;
+import java.util.function.Function;
+
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
+
 import vgalloy.javaoverrabbitmq.api.exception.JavaOverRabbitException;
 import vgalloy.javaoverrabbitmq.api.queue.ConsumerQueueDefinition;
 import vgalloy.javaoverrabbitmq.api.queue.FunctionQueueDefinition;
@@ -12,12 +19,6 @@ import vgalloy.javaoverrabbitmq.internal.consumer.ConsumerRabbitConsumerImpl;
 import vgalloy.javaoverrabbitmq.internal.consumer.FunctionRabbitConsumerImpl;
 import vgalloy.javaoverrabbitmq.internal.queue.ConsumerQueueDefinitionImpl;
 import vgalloy.javaoverrabbitmq.internal.queue.FunctionQueueDefinitionImpl;
-
-import java.io.IOException;
-import java.util.Objects;
-import java.util.concurrent.TimeoutException;
-import java.util.function.Consumer;
-import java.util.function.Function;
 
 /**
  * @author Vincent Galloy
