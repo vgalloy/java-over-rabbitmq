@@ -11,6 +11,9 @@ import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
 
 import vgalloy.javaoverrabbitmq.api.exception.JavaOverRabbitException;
+import vgalloy.javaoverrabbitmq.api.model.RabbitClientConsumer;
+import vgalloy.javaoverrabbitmq.api.model.RabbitClientFunction;
+import vgalloy.javaoverrabbitmq.api.model.RabbitElement;
 import vgalloy.javaoverrabbitmq.api.queue.ConsumerQueueDefinition;
 import vgalloy.javaoverrabbitmq.api.queue.FunctionQueueDefinition;
 import vgalloy.javaoverrabbitmq.internal.client.ConsumerClientProxy;
@@ -43,7 +46,7 @@ public final class Factory {
      * @param <R>                     the result message
      * @return a proxy for remote call
      */
-    public static <P, R> Function<P, R> createClient(ConnectionFactory connectionFactory, FunctionQueueDefinition<P, R> functionQueueDefinition) {
+    public static <P, R> RabbitClientFunction<P, R> createClient(ConnectionFactory connectionFactory, FunctionQueueDefinition<P, R> functionQueueDefinition) {
         Objects.requireNonNull(connectionFactory, "ConnectionFactory can not be null");
         try {
             return new FunctionClientProxy<>(functionQueueDefinition, connectionFactory.newConnection());
@@ -60,7 +63,7 @@ public final class Factory {
      * @param <P>                     the parameter message
      * @return a proxy for remote call
      */
-    public static <P> Consumer<P> createClient(ConnectionFactory connectionFactory, ConsumerQueueDefinition<P> consumerQueueDefinition) {
+    public static <P> RabbitClientConsumer<P> createClient(ConnectionFactory connectionFactory, ConsumerQueueDefinition<P> consumerQueueDefinition) {
         Objects.requireNonNull(connectionFactory, "ConnectionFactory can not be null");
         try {
             return new ConsumerClientProxy<>(consumerQueueDefinition, connectionFactory.newConnection());
@@ -79,7 +82,7 @@ public final class Factory {
      * @param <R>                     the result message
      * @return a rabbit consumer
      */
-    public static <P, R> RabbitConsumer createConsumer(ConnectionFactory connectionFactory, FunctionQueueDefinition<P, R> functionQueueDefinition, Function<P, R> implementation) {
+    public static <P, R> RabbitElement createConsumer(ConnectionFactory connectionFactory, FunctionQueueDefinition<P, R> functionQueueDefinition, Function<P, R> implementation) {
         Objects.requireNonNull(connectionFactory, "ConnectionFactory can not be null");
         Objects.requireNonNull(functionQueueDefinition, "FunctionQueueDefinitionImpl can not be null");
         try {
@@ -102,7 +105,7 @@ public final class Factory {
      * @param <P>                     the parameter message
      * @return a rabbit consumer
      */
-    public static <P> RabbitConsumer createConsumer(ConnectionFactory connectionFactory, ConsumerQueueDefinition<P> consumerQueueDefinition, Consumer<P> implementation) {
+    public static <P> RabbitElement createConsumer(ConnectionFactory connectionFactory, ConsumerQueueDefinition<P> consumerQueueDefinition, Consumer<P> implementation) {
         Objects.requireNonNull(connectionFactory, "ConnectionFactory can not be null");
         Objects.requireNonNull(consumerQueueDefinition, "consumerQueueDefinition can not be null");
         try {

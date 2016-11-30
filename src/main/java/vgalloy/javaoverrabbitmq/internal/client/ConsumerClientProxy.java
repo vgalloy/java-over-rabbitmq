@@ -2,19 +2,19 @@ package vgalloy.javaoverrabbitmq.internal.client;
 
 import java.io.IOException;
 import java.util.Objects;
-import java.util.function.Consumer;
 
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 
 import vgalloy.javaoverrabbitmq.api.exception.JavaOverRabbitException;
+import vgalloy.javaoverrabbitmq.api.model.RabbitClientConsumer;
 import vgalloy.javaoverrabbitmq.api.queue.ConsumerQueueDefinition;
 
 /**
  * @author Vincent Galloy
  *         Created by Vincent Galloy on 15/08/16.
  */
-public final class ConsumerClientProxy<P> extends AbstractClient implements Consumer<P> {
+public final class ConsumerClientProxy<P> extends AbstractClient implements RabbitClientConsumer<P> {
 
     private final ConsumerQueueDefinition<P> consumerQueueDefinition;
 

@@ -2,7 +2,6 @@ package vgalloy.javaoverrabbitmq.internal.client;
 
 import java.util.Objects;
 import java.util.UUID;
-import java.util.function.Function;
 
 import com.rabbitmq.client.AMQP;
 import com.rabbitmq.client.Channel;
@@ -12,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import vgalloy.javaoverrabbitmq.api.exception.JavaOverRabbitException;
+import vgalloy.javaoverrabbitmq.api.model.RabbitClientFunction;
 import vgalloy.javaoverrabbitmq.api.queue.FunctionQueueDefinition;
 import vgalloy.javaoverrabbitmq.internal.exception.RabbitConsumerException;
 import vgalloy.javaoverrabbitmq.internal.exception.TimeoutException;
@@ -21,7 +21,7 @@ import vgalloy.javaoverrabbitmq.internal.marshaller.impl.ExtendedMarshaller;
  * @author Vincent Galloy
  *         Created by Vincent Galloy on 15/08/16.
  */
-public final class FunctionClientProxy<P, R> extends AbstractClient implements Function<P, R> {
+public final class FunctionClientProxy<P, R> extends AbstractClient implements RabbitClientFunction<P, R> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(FunctionClientProxy.class);
 

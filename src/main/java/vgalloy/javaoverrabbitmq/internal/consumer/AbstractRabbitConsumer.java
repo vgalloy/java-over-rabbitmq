@@ -8,15 +8,15 @@ import com.rabbitmq.client.AMQP;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.QueueingConsumer;
 
-import vgalloy.javaoverrabbitmq.api.RabbitConsumer;
 import vgalloy.javaoverrabbitmq.api.exception.JavaOverRabbitException;
+import vgalloy.javaoverrabbitmq.api.model.RabbitElement;
 import vgalloy.javaoverrabbitmq.api.queue.UntypedQueue;
 
 /**
  * @author Vincent Galloy
  *         Created by Vincent Galloy on 18/08/16.
  */
-public abstract class AbstractRabbitConsumer extends QueueingConsumer implements RabbitConsumer {
+public abstract class AbstractRabbitConsumer extends QueueingConsumer implements RabbitElement {
 
     private final String consumerTag;
     private final UntypedQueue untypedQueue;

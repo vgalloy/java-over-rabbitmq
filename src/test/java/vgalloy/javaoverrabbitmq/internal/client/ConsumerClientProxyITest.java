@@ -2,11 +2,13 @@ package vgalloy.javaoverrabbitmq.internal.client;
 
 import java.util.function.Consumer;
 
+import com.rabbitmq.client.AlreadyClosedException;
 import org.junit.Assert;
 import org.junit.Test;
 
 import vgalloy.javaoverrabbitmq.api.Factory;
-import vgalloy.javaoverrabbitmq.api.RabbitConsumer;
+import vgalloy.javaoverrabbitmq.api.model.RabbitClientConsumer;
+import vgalloy.javaoverrabbitmq.api.model.RabbitElement;
 import vgalloy.javaoverrabbitmq.api.queue.ConsumerQueueDefinition;
 import vgalloy.javaoverrabbitmq.utils.fake.message.IntegerMessage;
 import vgalloy.javaoverrabbitmq.utils.fake.method.SimpleConsumerImpl;
@@ -25,7 +27,7 @@ public class ConsumerClientProxyITest {
         // GIVEN
         ConsumerQueueDefinition<IntegerMessage> queueDefinition = Factory.createQueue(TestUtil.getRandomQueueName(), IntegerMessage.class);
         SimpleConsumerImpl simpleQueueMethod = new SimpleConsumerImpl(null);
-        RabbitConsumer rabbitConsumer2 = Factory.createConsumer(BrokerUtils.getConnectionFactory(), queueDefinition, simpleQueueMethod);
+        RabbitElement rabbitConsumer2 = Factory.createConsumer(BrokerUtils.getConnectionFactory(), queueDefinition, simpleQueueMethod);
         Consumer<IntegerMessage> remote = Factory.createClient(BrokerUtils.getConnectionFactory(), queueDefinition);
 
         // WHEN
@@ -47,7 +49,7 @@ public class ConsumerClientProxyITest {
         // GIVEN
         ConsumerQueueDefinition<IntegerMessage> queueDefinition = Factory.createQueue(TestUtil.getRandomQueueName(), IntegerMessage.class);
         SimpleConsumerImpl simpleQueueMethod = new SimpleConsumerImpl(new IntegerMessage(1));
-        RabbitConsumer rabbitConsumer2 = Factory.createConsumer(BrokerUtils.getConnectionFactory(), queueDefinition, simpleQueueMethod);
+        RabbitElement rabbitConsumer2 = Factory.createConsumer(BrokerUtils.getConnectionFactory(), queueDefinition, simpleQueueMethod);
         Consumer<IntegerMessage> remote = Factory.createClient(BrokerUtils.getConnectionFactory(), queueDefinition);
 
         // WHEN
@@ -68,16 +70,40 @@ public class ConsumerClientProxyITest {
     public void testNumberMessageInQueue() throws Exception {
         // GIVEN
         ConsumerQueueDefinition<IntegerMessage> queueDefinition = Factory.createQueue(TestUtil.getRandomQueueName(), IntegerMessage.class);
-        SlowConsumerImpl noConsumer = new SlowConsumerImpl();
-        RabbitConsumer rabbitConsumer2 = Factory.createConsumer(BrokerUtils.getConnectionFactory(), queueDefinition, noConsumer);
-        Consumer<IntegerMessage> remote = Factory.createClient(BrokerUtils.getConnectionFactory(), queueDefinition);
+        SlowConsumerImpl slowConsumer = new SlowConsumerImpl();
+        RabbitElement rabbitConsumer2 = Factory.createConsumer(BrokerUtils.getConnectionFactory(), queueDefinition, slowConsumer);
+        RabbitClientConsumer<IntegerMessage> remote = Factory.createClient(BrokerUtils.getConnectionFactory(), queueDefinition);
 
         Assert.assertEquals(0, rabbitConsumer2.getMessageCount());
         remote.accept(new IntegerMessage(1));
         remote.accept(new IntegerMessage(1));
         Assert.assertEquals(1, rabbitConsumer2.getMessageCount());
+        Assert.assertEquals(1, remote.getMessageCount());
         remote.accept(new IntegerMessage(1));
         remote.accept(new IntegerMessage(1));
         Assert.assertEquals(3, rabbitConsumer2.getMessageCount());
+        Assert.assertEquals(3, remote.getMessageCount());
+
+        rabbitConsumer2.close();
+        remote.close();
+    }
+
+    @Test(expected = AlreadyClosedException.class)
+    public void testCloseConsumer() throws Exception {
+        ConsumerQueueDefinition<IntegerMessage> queueDefinition = Factory.createQueue(TestUtil.getRandomQueueName(), IntegerMessage.class);
+        SimpleConsumerImpl simpleQueueMethod = new SimpleConsumerImpl(null);
+        RabbitElement rabbitConsumer2 = Factory.createConsumer(BrokerUtils.getConnectionFactory(), queueDefinition, simpleQueueMethod);
+
+        rabbitConsumer2.close();
+        rabbitConsumer2.getMessageCount();
+    }
+
+    @Test(expected = AlreadyClosedException.class)
+    public void testCloseClient() throws Exception {
+        ConsumerQueueDefinition<IntegerMessage> queueDefinition = Factory.createQueue(TestUtil.getRandomQueueName(), IntegerMessage.class);
+        RabbitClientConsumer<IntegerMessage> remote = Factory.createClient(BrokerUtils.getConnectionFactory(), queueDefinition);
+
+        remote.close();
+        remote.getMessageCount();
     }
 }

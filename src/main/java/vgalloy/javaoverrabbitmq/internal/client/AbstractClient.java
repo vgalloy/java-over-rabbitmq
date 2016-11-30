@@ -3,17 +3,19 @@ package vgalloy.javaoverrabbitmq.internal.client;
 import java.io.IOException;
 import java.util.Objects;
 
+import com.rabbitmq.client.AMQP;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 
 import vgalloy.javaoverrabbitmq.api.exception.JavaOverRabbitException;
+import vgalloy.javaoverrabbitmq.api.model.RabbitElement;
 import vgalloy.javaoverrabbitmq.api.queue.UntypedQueue;
 
 /**
  * @author Vincent Galloy
  *         Created by Vincent Galloy on 18/08/16.
  */
-public abstract class AbstractClient {
+public abstract class AbstractClient implements RabbitElement {
 
     private final UntypedQueue untypedQueue;
     private final Connection connection;
@@ -39,6 +41,29 @@ public abstract class AbstractClient {
         Channel channel = connection.createChannel();
         channel.queueDeclare(untypedQueue.getName(), false, false, false, null);
         return channel;
+    }
+
+    @Override
+    public void close() {
+        try {
+            connection.close();
+        } catch (Exception e) {
+            throw new JavaOverRabbitException(e);
+        }
+    }
+
+    @Override
+    public int getMessageCount() {
+        Channel channel = null;
+        try {
+            channel = connection.createChannel();
+            AMQP.Queue.DeclareOk declareOk = channel.queueDeclare(untypedQueue.getName(), false, false, false, null);
+            return declareOk.getMessageCount();
+        } catch (IOException e) {
+            throw new JavaOverRabbitException(e);
+        } finally {
+            close(channel);
+        }
     }
 
     /**

@@ -1,10 +1,10 @@
-package vgalloy.javaoverrabbitmq.api;
+package vgalloy.javaoverrabbitmq.api.model;
 
 /**
  * @author Vincent Galloy
  *         Created by Vincent Galloy on 15/08/16.
  */
-public interface RabbitConsumer {
+public interface RabbitElement {
 
     /**
      * Close the consumer's channel.
