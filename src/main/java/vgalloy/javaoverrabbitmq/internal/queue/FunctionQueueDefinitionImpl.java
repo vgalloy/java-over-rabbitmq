@@ -38,7 +38,7 @@ public final class FunctionQueueDefinitionImpl<P, R> extends AbstractQueueDefini
     }
 
     @Override
-    public long getTimeout() {
+    public long getTimeoutMillis() {
         return timeoutMillis;
     }
 

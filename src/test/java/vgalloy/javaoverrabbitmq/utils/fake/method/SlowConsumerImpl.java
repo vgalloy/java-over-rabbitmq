@@ -8,19 +8,14 @@ import vgalloy.javaoverrabbitmq.utils.fake.message.IntegerMessage;
  * @author Vincent Galloy
  *         Created by Vincent Galloy on 17/08/16.
  */
-public class AcceptNullMethodImpl implements Consumer<IntegerMessage> {
-
-    private Boolean ok;
+public class SlowConsumerImpl implements Consumer<IntegerMessage> {
 
     @Override
     public void accept(IntegerMessage integerMessage) {
-        synchronized (this) {
-            ok = integerMessage == null;
-            notifyAll();
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
-    }
-
-    public Boolean getOk() {
-        return ok;
     }
 }

@@ -14,7 +14,6 @@ public final class GsonMarshaller implements RabbitMessageMarshaller {
 
     /**
      * Constructor.
-     * <p>
      * To prevent external instantiation.
      */
     private GsonMarshaller() {

@@ -10,17 +10,18 @@ import vgalloy.javaoverrabbitmq.utils.fake.message.IntegerMessage;
  */
 public class SimpleConsumerImpl implements Consumer<IntegerMessage> {
 
-    private int value = 0;
+    private IntegerMessage result;
 
-    @Override
-    public void accept(IntegerMessage integerMessage) {
-        synchronized (this) {
-            value = integerMessage.getFirst();
-            notifyAll();
-        }
+    public SimpleConsumerImpl(IntegerMessage result) {
+        this.result = result;
     }
 
-    public int getValue() {
-        return value;
+    @Override
+    public synchronized void accept(IntegerMessage integerMessage) {
+        result = integerMessage;
+    }
+
+    public IntegerMessage getResult() {
+        return result;
     }
 }

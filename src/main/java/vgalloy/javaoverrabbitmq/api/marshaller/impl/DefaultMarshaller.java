@@ -20,7 +20,6 @@ public final class DefaultMarshaller implements RabbitMessageMarshaller {
 
     /**
      * Constructor.
-     * <p>
      * To prevent external instantiation.
      */
     private DefaultMarshaller() {

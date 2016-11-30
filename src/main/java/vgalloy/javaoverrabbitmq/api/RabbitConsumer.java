@@ -10,4 +10,11 @@ public interface RabbitConsumer {
      * Close the consumer's channel.
      */
     void close();
+
+    /**
+     * Get the number of message in the queue.
+     *
+     * @return the number of message
+     */
+    int getMessageCount();
 }

@@ -6,6 +6,7 @@ import java.util.Objects;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 
+import vgalloy.javaoverrabbitmq.api.exception.JavaOverRabbitException;
 import vgalloy.javaoverrabbitmq.api.queue.UntypedQueue;
 
 /**
@@ -38,5 +39,20 @@ public abstract class AbstractClient {
         Channel channel = connection.createChannel();
         channel.queueDeclare(untypedQueue.getName(), false, false, false, null);
         return channel;
+    }
+
+    /**
+     * Close silently the channel.
+     *
+     * @param channel the channel to close
+     */
+    protected static void close(Channel channel) {
+        if (channel != null) {
+            try {
+                channel.close();
+            } catch (Exception e) {
+                throw new JavaOverRabbitException(e);
+            }
+        }
     }
 }

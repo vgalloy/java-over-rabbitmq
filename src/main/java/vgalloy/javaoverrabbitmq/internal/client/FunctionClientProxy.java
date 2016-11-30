@@ -73,13 +73,7 @@ public final class FunctionClientProxy<P, R> extends AbstractClient implements F
         } catch (Exception e) {
             throw new JavaOverRabbitException(e);
         } finally {
-            if (channel != null) {
-                try {
-                    channel.close();
-                } catch (Exception e) {
-                    throw new JavaOverRabbitException(e);
-                }
-            }
+            close(channel);
         }
     }
 
@@ -93,15 +87,15 @@ public final class FunctionClientProxy<P, R> extends AbstractClient implements F
      */
     private R getResult(QueueingConsumer consumer, String corrId) throws InterruptedException {
         long startTimeMillis = System.currentTimeMillis();
-        long remainingTime = functionQueueDefinition.getTimeout() - (System.currentTimeMillis() - startTimeMillis);
+        long remainingTime = functionQueueDefinition.getTimeoutMillis() - (System.currentTimeMillis() - startTimeMillis);
         while (remainingTime > 0) {
             QueueingConsumer.Delivery delivery = consumer.nextDelivery(remainingTime);
             if (delivery != null && delivery.getProperties().getCorrelationId().equals(corrId)) {
                 boolean isError = delivery.getProperties().getHeaders() != null && delivery.getProperties().getHeaders().containsKey(RabbitConsumerException.ERROR_HEADER);
                 return ExtendedMarshaller.deserialize(functionQueueDefinition.getMarshaller(), functionQueueDefinition.getReturnMessageClass(), isError, delivery.getBody());
             }
-            remainingTime = functionQueueDefinition.getTimeout() - (System.currentTimeMillis() - startTimeMillis);
+            remainingTime = functionQueueDefinition.getTimeoutMillis() - (System.currentTimeMillis() - startTimeMillis);
         }
-        throw new TimeoutException(functionQueueDefinition.getTimeout() + "  ms without valid response");
+        throw new TimeoutException(functionQueueDefinition.getTimeoutMillis() + "  ms without valid response");
     }
 }

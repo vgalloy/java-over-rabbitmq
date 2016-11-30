@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.Objects;
 import java.util.concurrent.TimeoutException;
 
+import com.rabbitmq.client.AMQP;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.QueueingConsumer;
 
@@ -18,6 +19,7 @@ import vgalloy.javaoverrabbitmq.api.queue.UntypedQueue;
 public abstract class AbstractRabbitConsumer extends QueueingConsumer implements RabbitConsumer {
 
     private final String consumerTag;
+    private final UntypedQueue untypedQueue;
 
     /**
      * Constructor.
@@ -27,8 +29,9 @@ public abstract class AbstractRabbitConsumer extends QueueingConsumer implements
      */
     protected AbstractRabbitConsumer(Channel channel, UntypedQueue untypedQueue) {
         super(Objects.requireNonNull(channel));
+        this.untypedQueue = Objects.requireNonNull(untypedQueue);
         try {
-            consumerTag = channel.basicConsume(Objects.requireNonNull(untypedQueue).getName(), false, this);
+            consumerTag = channel.basicConsume(untypedQueue.getName(), false, this);
         } catch (IOException e) {
             throw new JavaOverRabbitException("Can not create consumer", e);
         }
@@ -41,6 +44,16 @@ public abstract class AbstractRabbitConsumer extends QueueingConsumer implements
             getChannel().close();
         } catch (IOException | TimeoutException e) {
             throw new JavaOverRabbitException("Can not close consumer", e);
+        }
+    }
+
+    @Override
+    public int getMessageCount() {
+        try {
+            AMQP.Queue.DeclareOk declareOk = getChannel().queueDeclare(untypedQueue.getName(), false, false, false, null);
+            return declareOk.getMessageCount();
+        } catch (IOException e) {
+            throw new JavaOverRabbitException("Unable to get the message count", e);
         }
     }
 }

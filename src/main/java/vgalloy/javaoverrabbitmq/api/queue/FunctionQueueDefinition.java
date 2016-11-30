@@ -18,7 +18,7 @@ public interface FunctionQueueDefinition<P, R> extends QueueDefinition<P> {
      *
      * @return the timeout
      */
-    long getTimeout();
+    long getTimeoutMillis();
 
     /**
      * Set the timeout.

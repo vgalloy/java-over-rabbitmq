@@ -48,13 +48,7 @@ public final class ConsumerClientProxy<P> extends AbstractClient implements Cons
         } catch (IOException e) {
             throw new JavaOverRabbitException(e);
         } finally {
-            if (channel != null) {
-                try {
-                    channel.close();
-                } catch (Exception e) {
-                    throw new JavaOverRabbitException(e);
-                }
-            }
+            close(channel);
         }
     }
 }
