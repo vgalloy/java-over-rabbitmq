@@ -37,15 +37,14 @@ public final class ConsumerRabbitConsumerImpl<P> extends AbstractRabbitConsumer 
     }
 
     @Override
-    public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, byte[] body)
-            throws IOException {
+    public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, byte[] body) throws IOException {
         try {
             LOGGER.debug("Received body : {}", body);
             P paramAsObject = consumerQueueDefinition.getMarshaller().deserialize(consumerQueueDefinition.getParameterMessageClass(), body);
             LOGGER.debug("Received paramAsObject : {}", paramAsObject);
             service.accept(paramAsObject);
         } catch (Exception e) {
-            LOGGER.error("{}", e);
+            LOGGER.error("", e);
         }
         LOGGER.debug("basicAck");
         getChannel().basicAck(envelope.getDeliveryTag(), false);

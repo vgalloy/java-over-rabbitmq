@@ -1,16 +1,16 @@
-package vgalloy.javaoverrabbitmq.internal.queue;
+package vgalloy.javaoverrabbitmq.internal.queue.impl;
 
 import java.util.Objects;
 
 import vgalloy.javaoverrabbitmq.api.queue.FunctionQueueDefinition;
+import vgalloy.javaoverrabbitmq.internal.queue.AbstractQueueDefinition;
 
 /**
  * @author Vincent Galloy
  *         Created by Vincent Galloy on 15/08/16.
  */
-public final class FunctionQueueDefinitionImpl<P, R> extends AbstractQueueDefinition implements FunctionQueueDefinition<P, R> {
+public final class FunctionQueueDefinitionImpl<P, R> extends AbstractQueueDefinition<P> implements FunctionQueueDefinition<P, R> {
 
-    private final Class<P> parameterMessageClass;
     private final Class<R> returnMessageClass;
     private long timeoutMillis = 1_000;
 
@@ -22,14 +22,8 @@ public final class FunctionQueueDefinitionImpl<P, R> extends AbstractQueueDefini
      * @param returnMessageClass    the class representing the message received
      */
     public FunctionQueueDefinitionImpl(String name, Class<P> parameterMessageClass, Class<R> returnMessageClass) {
-        super(name);
-        this.parameterMessageClass = Objects.requireNonNull(parameterMessageClass);
+        super(name, parameterMessageClass);
         this.returnMessageClass = Objects.requireNonNull(returnMessageClass);
-    }
-
-    @Override
-    public Class<P> getParameterMessageClass() {
-        return parameterMessageClass;
     }
 
     @Override
@@ -43,7 +37,7 @@ public final class FunctionQueueDefinitionImpl<P, R> extends AbstractQueueDefini
     }
 
     @Override
-    public void setTimeout(long timeoutMillis) {
+    public void setTimeoutMillis(long timeoutMillis) {
         this.timeoutMillis = timeoutMillis;
     }
 }

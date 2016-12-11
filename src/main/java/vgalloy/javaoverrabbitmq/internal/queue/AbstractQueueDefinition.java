@@ -2,44 +2,29 @@ package vgalloy.javaoverrabbitmq.internal.queue;
 
 import java.util.Objects;
 
-import vgalloy.javaoverrabbitmq.api.marshaller.RabbitMessageMarshaller;
-import vgalloy.javaoverrabbitmq.api.marshaller.impl.DefaultMarshaller;
-import vgalloy.javaoverrabbitmq.api.queue.UntypedQueue;
+import vgalloy.javaoverrabbitmq.api.queue.QueueDefinition;
 
 /**
  * @author Vincent Galloy
- *         Created by Vincent Galloy on 18/08/16.
+ *         Created by Vincent Galloy on 11/12/16.
  */
-public abstract class AbstractQueueDefinition implements UntypedQueue {
+public abstract class AbstractQueueDefinition<P> extends AbstractUntypedQueueDefinition implements QueueDefinition<P> {
 
-    private final String name;
-    private RabbitMessageMarshaller rabbitMessageMarshaller = DefaultMarshaller.INSTANCE;
+    private final Class<P> parameterMessageClass;
 
     /**
      * Constructor.
      *
      * @param name the queue name
+     * @param parameterMessageClass the class representing the message send
      */
-    protected AbstractQueueDefinition(String name) {
-        this.name = Objects.requireNonNull(name);
-
-        if (name.trim().isEmpty()) {
-            throw new IllegalArgumentException("Queue name can not be empty");
-        }
+    protected AbstractQueueDefinition(String name, Class<P> parameterMessageClass) {
+        super(name);
+        this.parameterMessageClass = Objects.requireNonNull(parameterMessageClass);
     }
 
     @Override
-    public String getName() {
-        return name;
-    }
-
-    @Override
-    public RabbitMessageMarshaller getMarshaller() {
-        return rabbitMessageMarshaller;
-    }
-
-    @Override
-    public void setMarshaller(RabbitMessageMarshaller rabbitMessageMarshaller) {
-        this.rabbitMessageMarshaller = Objects.requireNonNull(rabbitMessageMarshaller);
+    public Class<P> getParameterMessageClass() {
+        return parameterMessageClass;
     }
 }

@@ -67,7 +67,7 @@ public class FunctionClientProxyTest {
             return new IntegerMessage(doubleIntegerMessage.getFirst() + doubleIntegerMessage.getSecond());
         };
         FunctionQueueDefinition<DoubleIntegerMessage, IntegerMessage> queueDefinition = Factory.createQueue(TestUtil.getRandomQueueName(), DoubleIntegerMessage.class, IntegerMessage.class);
-        queueDefinition.setTimeout(1000);
+        queueDefinition.setTimeoutMillis(1000);
         RabbitElement rabbitConsumer = Factory.createConsumer(BrokerUtils.getConnectionFactory(), queueDefinition, function);
         Function<DoubleIntegerMessage, IntegerMessage> remote = Factory.createClient(BrokerUtils.getConnectionFactory(), queueDefinition);
         Runnable runnable = () -> {
@@ -101,7 +101,7 @@ public class FunctionClientProxyTest {
             throw new RuntimeException("Shit Happens");
         };
         FunctionQueueDefinition<DoubleIntegerMessage, IntegerMessage> queueDefinition = Factory.createQueue(TestUtil.getRandomQueueName(), DoubleIntegerMessage.class, IntegerMessage.class);
-        queueDefinition.setTimeout(1000);
+        queueDefinition.setTimeoutMillis(1000);
         RabbitElement rabbitConsumer = Factory.createConsumer(BrokerUtils.getConnectionFactory(), queueDefinition, function);
         Function<DoubleIntegerMessage, IntegerMessage> remote = Factory.createClient(BrokerUtils.getConnectionFactory(), queueDefinition);
 
@@ -122,7 +122,7 @@ public class FunctionClientProxyTest {
         // GIVEN
         Function<DoubleIntegerMessage, IntegerMessage> function = doubleIntegerMessage -> null;
         FunctionQueueDefinition<DoubleIntegerMessage, IntegerMessage> queueDefinition = Factory.createQueue(TestUtil.getRandomQueueName(), DoubleIntegerMessage.class, IntegerMessage.class);
-        queueDefinition.setTimeout(1000);
+        queueDefinition.setTimeoutMillis(1000);
         RabbitElement rabbitConsumer = Factory.createConsumer(BrokerUtils.getConnectionFactory(), queueDefinition, function);
         Function<DoubleIntegerMessage, IntegerMessage> remote = Factory.createClient(BrokerUtils.getConnectionFactory(), queueDefinition);
 

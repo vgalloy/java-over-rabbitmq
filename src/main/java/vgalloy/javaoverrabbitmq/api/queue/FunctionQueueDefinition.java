@@ -25,5 +25,5 @@ public interface FunctionQueueDefinition<P, R> extends QueueDefinition<P> {
      *
      * @param timeoutMillis the time before an exception be raise.
      */
-    void setTimeout(long timeoutMillis);
+    void setTimeoutMillis(long timeoutMillis);
 }

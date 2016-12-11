@@ -20,8 +20,8 @@ import vgalloy.javaoverrabbitmq.internal.client.ConsumerClientProxy;
 import vgalloy.javaoverrabbitmq.internal.client.FunctionClientProxy;
 import vgalloy.javaoverrabbitmq.internal.consumer.ConsumerRabbitConsumerImpl;
 import vgalloy.javaoverrabbitmq.internal.consumer.FunctionRabbitConsumerImpl;
-import vgalloy.javaoverrabbitmq.internal.queue.ConsumerQueueDefinitionImpl;
-import vgalloy.javaoverrabbitmq.internal.queue.FunctionQueueDefinitionImpl;
+import vgalloy.javaoverrabbitmq.internal.queue.impl.ConsumerQueueDefinitionImpl;
+import vgalloy.javaoverrabbitmq.internal.queue.impl.FunctionQueueDefinitionImpl;
 
 /**
  * @author Vincent Galloy
