@@ -57,7 +57,7 @@ public final class FunctionRabbitConsumerImpl<P, R> extends AbstractRabbitConsum
                     .build();
             getChannel().basicPublish("", properties.getReplyTo(), replyProps, resultAsByte);
         } catch (Exception e) {
-            LOGGER.error("{}", e);
+            LOGGER.error("", e);
             Map<String, Object> map = new HashMap<>();
             map.put(RabbitConsumerException.ERROR_HEADER, true);
             AMQP.BasicProperties replyProps = new AMQP.BasicProperties.Builder()

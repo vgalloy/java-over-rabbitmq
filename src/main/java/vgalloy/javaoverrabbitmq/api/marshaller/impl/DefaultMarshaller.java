@@ -66,7 +66,7 @@ public final class DefaultMarshaller implements RabbitMessageMarshaller {
         try {
             bis = new ByteArrayInputStream(bytes);
             ois = new ObjectInputStream(bis);
-            return (T) ois.readObject();
+            return clazz.cast(ois.readObject());
         } catch (Exception e) {
             throw new JavaOverRabbitException(e);
         } finally {

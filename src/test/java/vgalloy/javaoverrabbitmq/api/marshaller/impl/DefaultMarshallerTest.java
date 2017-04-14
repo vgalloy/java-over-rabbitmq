@@ -19,13 +19,24 @@ public class DefaultMarshallerTest {
 
     @Test
     public void testSimpleSerialization() {
+        // GIVEN
         DoubleIntegerMessage doubleIntegerMessage = new DoubleIntegerMessage(1, 2);
-        assertEquals(doubleIntegerMessage, marshaller.deserialize(DoubleIntegerMessage.class, marshaller.serialize(doubleIntegerMessage)));
+
+        // WHEN
+        DoubleIntegerMessage result = marshaller.deserialize(DoubleIntegerMessage.class, marshaller.serialize(doubleIntegerMessage));
+        // THEN
+        assertEquals(doubleIntegerMessage, result);
     }
 
     @Test
     public void testNullSerialization() {
-        IntegerMessage result = marshaller.deserialize(IntegerMessage.class, marshaller.serialize(null));
+        // GIVEN
+        IntegerMessage message = null;
+
+        // WHEN
+        IntegerMessage result = marshaller.deserialize(IntegerMessage.class, marshaller.serialize(message));
+
+        // THEN
         assertNull(result);
     }
 }

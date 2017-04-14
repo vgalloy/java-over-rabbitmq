@@ -11,7 +11,6 @@ import vgalloy.javaoverrabbitmq.utils.fake.message.DoubleIntegerMessage;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
-import static org.junit.Assert.fail;
 
 /**
  * @author Vincent Galloy
@@ -23,24 +22,37 @@ public class ExtendedMarshallerTest {
 
     @Test
     public void testSimpleSerialization() {
+        // GIVEN
         DoubleIntegerMessage doubleIntegerMessage = new DoubleIntegerMessage(2, 3);
-        assertEquals(doubleIntegerMessage, ExtendedMarshaller.deserialize(marshaller, DoubleIntegerMessage.class, false, marshaller.serialize(doubleIntegerMessage)));
+
+        // WHEN
+        DoubleIntegerMessage result = ExtendedMarshaller.deserialize(marshaller, DoubleIntegerMessage.class, marshaller.serialize(doubleIntegerMessage));
+
+        // THEN
+        assertEquals(doubleIntegerMessage, result);
     }
 
     @Test
     public void testErrorSerialization() {
+        // GIVEN
         RabbitConsumerException rabbitConsumerException = new RabbitConsumerException("An Exception");
-        try {
-            ExtendedMarshaller.deserialize(marshaller, DoubleIntegerMessage.class, true, marshaller.serialize(rabbitConsumerException));
-            fail("No Exception ! ! ");
-        } catch (RabbitRemoteException e) {
-            assertEquals(rabbitConsumerException.getMessage(), e.getMessage());
-        }
+
+        // WHEN
+        RabbitRemoteException exception = ExtendedMarshaller.deserializeError(marshaller, marshaller.serialize(rabbitConsumerException));
+
+        // THEN
+        assertEquals(rabbitConsumerException.getMessage(), exception.getMessage());
     }
 
     @Test
     public void testNullSerialization() {
-        DoubleIntegerMessage result = ExtendedMarshaller.deserialize(marshaller, DoubleIntegerMessage.class, false, marshaller.serialize(null));
+        // GIVEN
+        DoubleIntegerMessage message = null;
+
+        // WHEN
+        DoubleIntegerMessage result = ExtendedMarshaller.deserialize(marshaller, DoubleIntegerMessage.class, marshaller.serialize(message));
+
+        // THEN
         assertNull(result);
     }
 }
