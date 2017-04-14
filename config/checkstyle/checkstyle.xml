@@ -25,7 +25,13 @@
     <!-- Checks no double empty line -->
     <module name="RegexpMultiline">
         <property name="format" value="\n\n\n"/>
-        <property name="message" value="Double empty lines are forbidden"/>
+        <property name="message" value="Double empty lines are forbidden."/>
+    </module>
+
+    <!-- Checks no CRLF -->
+    <module name="RegexpMultiline">
+        <property name="format" value="\r"/>
+        <property name="message" value="CRLF and CR are forbidden. Please use LF."/>
     </module>
 
     <module name="NewlineAtEndOfFile">
