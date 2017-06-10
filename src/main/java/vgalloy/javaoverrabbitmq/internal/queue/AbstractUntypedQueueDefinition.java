@@ -21,7 +21,7 @@ public abstract class AbstractUntypedQueueDefinition implements UntypedQueue {
      *
      * @param name the queue name
      */
-    protected AbstractUntypedQueueDefinition(String name) {
+    AbstractUntypedQueueDefinition(String name) {
         this.name = Objects.requireNonNull(name);
 
         if (name.trim().isEmpty()) {

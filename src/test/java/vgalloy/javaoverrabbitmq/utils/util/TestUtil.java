@@ -1,7 +1,7 @@
 package vgalloy.javaoverrabbitmq.utils.util;
 
-import java.security.SecureRandom;
 import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * Created by Vincent Galloy on 17/08/16.
@@ -10,7 +10,7 @@ import java.util.Random;
  */
 public final class TestUtil {
 
-    private static final Random RANDOM = new SecureRandom();
+    private static final Random RANDOM = ThreadLocalRandom.current();
 
     private TestUtil() {
         throw new AssertionError();

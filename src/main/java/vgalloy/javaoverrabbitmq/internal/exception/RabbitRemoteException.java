@@ -4,6 +4,7 @@ import java.util.Objects;
 
 /**
  * Created by Vincent Galloy on 17/08/16.
+ * This class represents a fail on server method invocation.
  *
  * @author Vincent Galloy
  */

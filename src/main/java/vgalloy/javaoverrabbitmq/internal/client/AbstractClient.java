@@ -20,6 +20,7 @@ public abstract class AbstractClient implements RabbitElement {
 
     private final UntypedQueue untypedQueue;
     private final Connection connection;
+    private Channel currentChannel;
 
     /**
      * Constructor.
@@ -27,41 +28,15 @@ public abstract class AbstractClient implements RabbitElement {
      * @param untypedQueue the queue name
      * @param connection   the connection
      */
-    protected AbstractClient(UntypedQueue untypedQueue, Connection connection) {
+    AbstractClient(UntypedQueue untypedQueue, Connection connection) {
         this.untypedQueue = Objects.requireNonNull(untypedQueue);
         this.connection = Objects.requireNonNull(connection);
-    }
-
-    /**
-     * Close silently the channel.
-     *
-     * @param channel the channel to close
-     */
-    protected static void close(Channel channel) {
-        if (channel != null) {
-            try {
-                channel.close();
-            } catch (Exception e) {
-                throw new JavaOverRabbitException(e);
-            }
-        }
-    }
-
-    /**
-     * Get a new Channel for method invocation.
-     *
-     * @return the new chanel
-     * @throws IOException if the channel can not be create
-     */
-    protected Channel createChannel() throws IOException {
-        Channel channel = connection.createChannel();
-        channel.queueDeclare(untypedQueue.getName(), false, false, false, null);
-        return channel;
     }
 
     @Override
     public void close() {
         try {
+            close(currentChannel);
             connection.close();
         } catch (Exception e) {
             throw new JavaOverRabbitException(e);
@@ -79,6 +54,49 @@ public abstract class AbstractClient implements RabbitElement {
             throw new JavaOverRabbitException(e);
         } finally {
             close(channel);
+        }
+    }
+
+    /**
+     * Get a an  Channel for method invocation.
+     *
+     * @return the chanel
+     */
+    Channel getChannel() {
+        if (currentChannel != null) {
+            return currentChannel;
+        }
+        currentChannel = createChannel();
+        return currentChannel;
+    }
+
+    /**
+     * Get a new Channel for method invocation.
+     *
+     * @return the new chanel
+     */
+    private Channel createChannel() {
+        try {
+            Channel channel = connection.createChannel();
+            channel.queueDeclare(untypedQueue.getName(), false, false, false, null);
+            return channel;
+        } catch (IOException e) {
+            throw new JavaOverRabbitException("Unable to create the channel", e);
+        }
+    }
+
+    /**
+     * Close silently the channel.
+     *
+     * @param channel the channel to close
+     */
+    private static void close(Channel channel) {
+        if (channel != null) {
+            try {
+                channel.close();
+            } catch (Exception e) {
+                throw new JavaOverRabbitException(e);
+            }
         }
     }
 }

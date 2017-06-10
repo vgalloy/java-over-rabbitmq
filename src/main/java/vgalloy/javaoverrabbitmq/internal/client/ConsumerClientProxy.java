@@ -42,14 +42,11 @@ public final class ConsumerClientProxy<P> extends AbstractClient implements Rabb
      * @param messageAsByte the message as byte array
      */
     private void sendOneWay(byte... messageAsByte) {
-        Channel channel = null;
         try {
-            channel = createChannel();
+            Channel channel = getChannel();
             channel.basicPublish("", consumerQueueDefinition.getName(), null, messageAsByte);
         } catch (IOException e) {
             throw new JavaOverRabbitException(e);
-        } finally {
-            close(channel);
         }
     }
 }

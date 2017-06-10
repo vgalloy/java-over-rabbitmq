@@ -2,6 +2,7 @@ package vgalloy.javaoverrabbitmq.internal.client;
 
 import java.util.Random;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.Function;
 
 import com.rabbitmq.client.AlreadyClosedException;
@@ -146,8 +147,15 @@ public class FunctionClientProxyTest {
     @Test
     public void testMultiThread() throws Exception {
         // GIVEN
-        Random random = new Random();
-        Function<Integer, Integer> function = e -> 2 * e;
+        Random random = ThreadLocalRandom.current();
+        Function<Integer, Integer> function = e -> {
+                try {
+                    Thread.sleep(Math.abs(random.nextInt() % 10));
+                } catch (InterruptedException e1) {
+                    e1.printStackTrace();
+                }
+            return 2 * e;
+        };
         FunctionQueueDefinition<Integer, Integer> queueDefinition = Factory.createQueue(TestUtil.getRandomQueueName(), Integer.class, Integer.class);
         Factory.createConsumer(BrokerUtils.getConnectionFactory(), queueDefinition, function);
 

@@ -61,10 +61,8 @@ public final class FunctionClientProxy<P, R> extends AbstractClient implements R
      * @return the response as byte array
      */
     private R sendRPC(byte[] messageAsByte) {
-        Channel channel = null;
-
         try {
-            channel = createChannel();
+            Channel channel = getChannel();
             String replyQueueName = channel.queueDeclare().getQueue();
 
             String corrId = UUID.randomUUID().toString();
@@ -99,8 +97,6 @@ public final class FunctionClientProxy<P, R> extends AbstractClient implements R
             return response.poll(functionQueueDefinition.getTimeoutMillis(), TimeUnit.MILLISECONDS).get();
         } catch (Exception e) {
             throw new JavaOverRabbitException(e);
-        } finally {
-            close(channel);
         }
     }
 }
