@@ -1,8 +1,9 @@
 package vgalloy.javaoverrabbitmq.api.queue;
 
 /**
+ * Created by Vincent Galloy on 15/08/16.
+ *
  * @author Vincent Galloy
- *         Created by Vincent Galloy on 15/08/16.
  */
 public interface FunctionQueueDefinition<P, R> extends QueueDefinition<P> {
 

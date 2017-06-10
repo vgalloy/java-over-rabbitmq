@@ -4,8 +4,9 @@ import java.io.Serializable;
 import java.util.Objects;
 
 /**
+ * Created by Vincent Galloy on 15/08/16.
+ *
  * @author Vincent Galloy
- *         Created by Vincent Galloy on 15/08/16.
  */
 public class DoubleIntegerMessage implements Serializable {
 
@@ -29,9 +30,9 @@ public class DoubleIntegerMessage implements Serializable {
     @Override
     public String toString() {
         return "DoubleIntegerMessage{" +
-                "first=" + first +
-                ", second=" + second +
-                '}';
+            "first=" + first +
+            ", second=" + second +
+            '}';
     }
 
     @Override

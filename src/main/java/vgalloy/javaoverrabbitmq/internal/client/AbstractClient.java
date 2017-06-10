@@ -12,8 +12,9 @@ import vgalloy.javaoverrabbitmq.api.model.RabbitElement;
 import vgalloy.javaoverrabbitmq.api.queue.UntypedQueue;
 
 /**
+ * Created by Vincent Galloy on 18/08/16.
+ *
  * @author Vincent Galloy
- *         Created by Vincent Galloy on 18/08/16.
  */
 public abstract class AbstractClient implements RabbitElement {
 
@@ -29,6 +30,21 @@ public abstract class AbstractClient implements RabbitElement {
     protected AbstractClient(UntypedQueue untypedQueue, Connection connection) {
         this.untypedQueue = Objects.requireNonNull(untypedQueue);
         this.connection = Objects.requireNonNull(connection);
+    }
+
+    /**
+     * Close silently the channel.
+     *
+     * @param channel the channel to close
+     */
+    protected static void close(Channel channel) {
+        if (channel != null) {
+            try {
+                channel.close();
+            } catch (Exception e) {
+                throw new JavaOverRabbitException(e);
+            }
+        }
     }
 
     /**
@@ -63,21 +79,6 @@ public abstract class AbstractClient implements RabbitElement {
             throw new JavaOverRabbitException(e);
         } finally {
             close(channel);
-        }
-    }
-
-    /**
-     * Close silently the channel.
-     *
-     * @param channel the channel to close
-     */
-    protected static void close(Channel channel) {
-        if (channel != null) {
-            try {
-                channel.close();
-            } catch (Exception e) {
-                throw new JavaOverRabbitException(e);
-            }
         }
     }
 }

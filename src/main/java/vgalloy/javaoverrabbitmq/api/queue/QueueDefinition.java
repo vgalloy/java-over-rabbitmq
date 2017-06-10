@@ -1,8 +1,9 @@
 package vgalloy.javaoverrabbitmq.api.queue;
 
 /**
+ * Created by Vincent Galloy on 17/08/16.
+ *
  * @author Vincent Galloy
- *         Created by Vincent Galloy on 17/08/16.
  */
 public interface QueueDefinition<P> extends UntypedQueue {
 

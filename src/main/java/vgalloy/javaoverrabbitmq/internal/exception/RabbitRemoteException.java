@@ -3,8 +3,9 @@ package vgalloy.javaoverrabbitmq.internal.exception;
 import java.util.Objects;
 
 /**
+ * Created by Vincent Galloy on 17/08/16.
+ *
  * @author Vincent Galloy
- *         Created by Vincent Galloy on 17/08/16.
  */
 public class RabbitRemoteException extends RuntimeException {
 

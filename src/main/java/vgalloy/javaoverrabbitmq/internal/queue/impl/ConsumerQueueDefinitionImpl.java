@@ -4,8 +4,9 @@ import vgalloy.javaoverrabbitmq.api.queue.ConsumerQueueDefinition;
 import vgalloy.javaoverrabbitmq.internal.queue.AbstractQueueDefinition;
 
 /**
+ * Created by Vincent Galloy on 17/08/16.
+ *
  * @author Vincent Galloy
- *         Created by Vincent Galloy on 17/08/16.
  */
 public final class ConsumerQueueDefinitionImpl<P> extends AbstractQueueDefinition<P> implements ConsumerQueueDefinition<P> {
 

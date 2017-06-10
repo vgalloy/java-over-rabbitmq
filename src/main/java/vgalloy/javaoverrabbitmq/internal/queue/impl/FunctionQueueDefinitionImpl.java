@@ -6,8 +6,9 @@ import vgalloy.javaoverrabbitmq.api.queue.FunctionQueueDefinition;
 import vgalloy.javaoverrabbitmq.internal.queue.AbstractQueueDefinition;
 
 /**
+ * Created by Vincent Galloy on 15/08/16.
+ *
  * @author Vincent Galloy
- *         Created by Vincent Galloy on 15/08/16.
  */
 public final class FunctionQueueDefinitionImpl<P, R> extends AbstractQueueDefinition<P> implements FunctionQueueDefinition<P, R> {
 

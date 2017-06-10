@@ -11,8 +11,9 @@ import vgalloy.javaoverrabbitmq.api.model.RabbitClientConsumer;
 import vgalloy.javaoverrabbitmq.api.queue.ConsumerQueueDefinition;
 
 /**
+ * Created by Vincent Galloy on 15/08/16.
+ *
  * @author Vincent Galloy
- *         Created by Vincent Galloy on 15/08/16.
  */
 public final class ConsumerClientProxy<P> extends AbstractClient implements RabbitClientConsumer<P> {
 

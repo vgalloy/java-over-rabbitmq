@@ -5,8 +5,9 @@ import java.util.Objects;
 import vgalloy.javaoverrabbitmq.api.queue.QueueDefinition;
 
 /**
+ * Created by Vincent Galloy on 11/12/16.
+ *
  * @author Vincent Galloy
- *         Created by Vincent Galloy on 11/12/16.
  */
 public abstract class AbstractQueueDefinition<P> extends AbstractUntypedQueueDefinition implements QueueDefinition<P> {
 
@@ -15,7 +16,7 @@ public abstract class AbstractQueueDefinition<P> extends AbstractUntypedQueueDef
     /**
      * Constructor.
      *
-     * @param name the queue name
+     * @param name                  the queue name
      * @param parameterMessageClass the class representing the message send
      */
     protected AbstractQueueDefinition(String name, Class<P> parameterMessageClass) {

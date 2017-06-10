@@ -2,13 +2,11 @@ package vgalloy.javaoverrabbitmq.internal.client;
 
 import java.util.function.Consumer;
 
+import com.rabbitmq.client.AlreadyClosedException;
 import org.apache.qpid.server.Broker;
 import org.junit.After;
-import org.junit.Before;
-import java.util.function.Consumer;
-
-import com.rabbitmq.client.AlreadyClosedException;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 
 import vgalloy.javaoverrabbitmq.api.Factory;
@@ -22,8 +20,9 @@ import vgalloy.javaoverrabbitmq.utils.util.BrokerUtils;
 import vgalloy.javaoverrabbitmq.utils.util.TestUtil;
 
 /**
+ * Created by Vincent Galloy on 17/08/16.
+ *
  * @author Vincent Galloy
- *         Created by Vincent Galloy on 17/08/16.
  */
 public class ConsumerClientProxyTest {
 

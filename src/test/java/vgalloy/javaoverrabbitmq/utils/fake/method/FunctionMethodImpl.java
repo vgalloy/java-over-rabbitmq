@@ -6,8 +6,9 @@ import vgalloy.javaoverrabbitmq.utils.fake.message.DoubleIntegerMessage;
 import vgalloy.javaoverrabbitmq.utils.fake.message.IntegerMessage;
 
 /**
+ * Created by Vincent Galloy on 17/08/16.
+ *
  * @author Vincent Galloy
- *         Created by Vincent Galloy on 17/08/16.
  */
 public class FunctionMethodImpl implements Function<DoubleIntegerMessage, IntegerMessage> {
 

@@ -4,8 +4,9 @@ import java.security.SecureRandom;
 import java.util.Random;
 
 /**
+ * Created by Vincent Galloy on 17/08/16.
+ *
  * @author Vincent Galloy
- *         Created by Vincent Galloy on 17/08/16.
  */
 public final class TestUtil {
 

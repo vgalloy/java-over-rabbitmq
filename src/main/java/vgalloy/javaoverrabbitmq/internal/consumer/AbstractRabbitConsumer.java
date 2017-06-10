@@ -13,8 +13,9 @@ import vgalloy.javaoverrabbitmq.api.model.RabbitElement;
 import vgalloy.javaoverrabbitmq.api.queue.UntypedQueue;
 
 /**
+ * Created by Vincent Galloy on 18/08/16.
+ *
  * @author Vincent Galloy
- *         Created by Vincent Galloy on 18/08/16.
  */
 public abstract class AbstractRabbitConsumer extends DefaultConsumer implements RabbitElement {
 

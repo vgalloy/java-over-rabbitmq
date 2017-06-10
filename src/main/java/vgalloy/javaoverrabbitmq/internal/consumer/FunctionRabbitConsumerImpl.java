@@ -16,8 +16,9 @@ import vgalloy.javaoverrabbitmq.api.queue.FunctionQueueDefinition;
 import vgalloy.javaoverrabbitmq.internal.exception.RabbitConsumerException;
 
 /**
+ * Created by Vincent Galloy on 15/08/16.
+ *
  * @author Vincent Galloy
- *         Created by Vincent Galloy on 15/08/16.
  */
 public final class FunctionRabbitConsumerImpl<P, R> extends AbstractRabbitConsumer {
 
@@ -41,7 +42,7 @@ public final class FunctionRabbitConsumerImpl<P, R> extends AbstractRabbitConsum
 
     @Override
     public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, byte[] body)
-            throws IOException {
+        throws IOException {
 
         try {
             LOGGER.debug("Received body : {}", body);
@@ -53,17 +54,17 @@ public final class FunctionRabbitConsumerImpl<P, R> extends AbstractRabbitConsum
             byte[] resultAsByte = functionQueueDefinition.getMarshaller().serialize(result);
 
             AMQP.BasicProperties replyProps = new AMQP.BasicProperties.Builder()
-                    .correlationId(properties.getCorrelationId())
-                    .build();
+                .correlationId(properties.getCorrelationId())
+                .build();
             getChannel().basicPublish("", properties.getReplyTo(), replyProps, resultAsByte);
         } catch (Exception e) {
             LOGGER.error("", e);
             Map<String, Object> map = new HashMap<>();
             map.put(RabbitConsumerException.ERROR_HEADER, true);
             AMQP.BasicProperties replyProps = new AMQP.BasicProperties.Builder()
-                    .headers(map)
-                    .correlationId(properties.getCorrelationId())
-                    .build();
+                .headers(map)
+                .correlationId(properties.getCorrelationId())
+                .build();
             byte[] resultAsByte = functionQueueDefinition.getMarshaller().serialize(new RabbitConsumerException(e.getMessage()));
             getChannel().basicPublish("", properties.getReplyTo(), replyProps, resultAsByte);
         }

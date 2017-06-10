@@ -3,8 +3,9 @@ package vgalloy.javaoverrabbitmq.api.queue;
 import vgalloy.javaoverrabbitmq.api.marshaller.RabbitMessageMarshaller;
 
 /**
+ * Created by Vincent Galloy on 18/08/16.
+ *
  * @author Vincent Galloy
- *         Created by Vincent Galloy on 18/08/16.
  */
 public interface UntypedQueue {
 

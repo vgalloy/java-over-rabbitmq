@@ -4,8 +4,9 @@ import java.io.Serializable;
 import java.util.Objects;
 
 /**
+ * Created by Vincent Galloy on 15/08/16.
+ *
  * @author Vincent Galloy
- *         Created by Vincent Galloy on 15/08/16.
  */
 public class IntegerMessage implements Serializable {
 
@@ -23,8 +24,8 @@ public class IntegerMessage implements Serializable {
     @Override
     public String toString() {
         return "IntegerMessage{" +
-                "first=" + first +
-                '}';
+            "first=" + first +
+            '}';
     }
 
     @Override

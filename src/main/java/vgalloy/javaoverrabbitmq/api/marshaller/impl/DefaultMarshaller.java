@@ -11,8 +11,9 @@ import vgalloy.javaoverrabbitmq.api.exception.JavaOverRabbitException;
 import vgalloy.javaoverrabbitmq.api.marshaller.RabbitMessageMarshaller;
 
 /**
+ * Created by Vincent Galloy on 15/08/16.
+ *
  * @author Vincent Galloy
- *         Created by Vincent Galloy on 15/08/16.
  */
 public final class DefaultMarshaller implements RabbitMessageMarshaller {
 

@@ -13,8 +13,9 @@ import org.slf4j.LoggerFactory;
 import vgalloy.javaoverrabbitmq.api.queue.ConsumerQueueDefinition;
 
 /**
+ * Created by Vincent Galloy on 17/08/16.
+ *
  * @author Vincent Galloy
- *         Created by Vincent Galloy on 17/08/16.
  */
 public final class ConsumerRabbitConsumerImpl<P> extends AbstractRabbitConsumer {
 
