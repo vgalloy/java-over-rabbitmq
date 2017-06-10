@@ -6,9 +6,9 @@ import java.util.function.Function;
 
 import com.rabbitmq.client.AlreadyClosedException;
 import org.apache.qpid.server.Broker;
-import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Assert;
-import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import vgalloy.javaoverrabbitmq.api.Factory;
@@ -34,15 +34,15 @@ import static org.junit.Assert.fail;
  */
 public class FunctionClientProxyTest {
 
-    private Broker broker;
+    private static Broker broker;
 
-    @Before
-    public void tearUp() {
+    @BeforeClass
+    public static void tearUp() {
         broker = BrokerUtils.startEmbeddedBroker();
     }
 
-    @After
-    public void tearDown() {
+    @AfterClass
+    public static void tearDown() {
         broker.shutdown();
     }
 

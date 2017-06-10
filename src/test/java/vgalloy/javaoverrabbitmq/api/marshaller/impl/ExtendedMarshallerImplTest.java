@@ -5,7 +5,8 @@ import org.junit.Test;
 import vgalloy.javaoverrabbitmq.api.marshaller.RabbitMessageMarshaller;
 import vgalloy.javaoverrabbitmq.internal.exception.RabbitConsumerException;
 import vgalloy.javaoverrabbitmq.internal.exception.RabbitRemoteException;
-import vgalloy.javaoverrabbitmq.internal.marshaller.impl.ExtendedMarshaller;
+import vgalloy.javaoverrabbitmq.internal.marshaller.ExtendedMarshaller;
+import vgalloy.javaoverrabbitmq.internal.marshaller.impl.ExtendedMarshallerImpl;
 import vgalloy.javaoverrabbitmq.utils.fake.marshaller.GsonMarshaller;
 import vgalloy.javaoverrabbitmq.utils.fake.message.DoubleIntegerMessage;
 
@@ -17,9 +18,10 @@ import static org.junit.Assert.assertNull;
  *
  * @author Vincent Galloy
  */
-public class ExtendedMarshallerTest {
+public class ExtendedMarshallerImplTest {
 
     private final RabbitMessageMarshaller marshaller = GsonMarshaller.INSTANCE;
+    private final ExtendedMarshaller extendedMarshaller = new ExtendedMarshallerImpl(GsonMarshaller.INSTANCE);
 
     @Test
     public void testSimpleSerialization() {
@@ -27,7 +29,7 @@ public class ExtendedMarshallerTest {
         DoubleIntegerMessage doubleIntegerMessage = new DoubleIntegerMessage(2, 3);
 
         // WHEN
-        DoubleIntegerMessage result = ExtendedMarshaller.deserialize(marshaller, DoubleIntegerMessage.class, marshaller.serialize(doubleIntegerMessage));
+        DoubleIntegerMessage result = extendedMarshaller.deserialize(DoubleIntegerMessage.class, marshaller.serialize(doubleIntegerMessage));
 
         // THEN
         assertEquals(doubleIntegerMessage, result);
@@ -39,7 +41,7 @@ public class ExtendedMarshallerTest {
         RabbitConsumerException rabbitConsumerException = new RabbitConsumerException("An Exception");
 
         // WHEN
-        RabbitRemoteException exception = ExtendedMarshaller.deserializeError(marshaller, marshaller.serialize(rabbitConsumerException));
+        RabbitRemoteException exception = extendedMarshaller.deserializeError(marshaller.serialize(rabbitConsumerException));
 
         // THEN
         assertEquals(rabbitConsumerException.getMessage(), exception.getMessage());
@@ -51,7 +53,7 @@ public class ExtendedMarshallerTest {
         DoubleIntegerMessage message = null;
 
         // WHEN
-        DoubleIntegerMessage result = ExtendedMarshaller.deserialize(marshaller, DoubleIntegerMessage.class, marshaller.serialize(message));
+        DoubleIntegerMessage result = extendedMarshaller.deserialize(DoubleIntegerMessage.class, marshaller.serialize(message));
 
         // THEN
         assertNull(result);

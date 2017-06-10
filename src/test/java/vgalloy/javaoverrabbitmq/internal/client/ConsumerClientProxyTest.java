@@ -4,9 +4,9 @@ import java.util.function.Consumer;
 
 import com.rabbitmq.client.AlreadyClosedException;
 import org.apache.qpid.server.Broker;
-import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Assert;
-import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import vgalloy.javaoverrabbitmq.api.Factory;
@@ -26,15 +26,15 @@ import vgalloy.javaoverrabbitmq.utils.util.TestUtil;
  */
 public class ConsumerClientProxyTest {
 
-    private Broker broker;
+    private static Broker broker;
 
-    @Before
-    public void tearUp() {
+    @BeforeClass
+    public static void tearUp() {
         broker = BrokerUtils.startEmbeddedBroker();
     }
 
-    @After
-    public void tearDown() {
+    @AfterClass
+    public static void tearDown() {
         broker.shutdown();
     }
 
@@ -49,14 +49,10 @@ public class ConsumerClientProxyTest {
         // WHEN
         remote.accept(new IntegerMessage(1));
 
-        synchronized (simpleQueueMethod) {
-            if (simpleQueueMethod.getResult() == null) {
-                simpleQueueMethod.wait(300);
-            }
-        }
+        Thread.sleep(300);
 
         // THEN
-        Assert.assertEquals(new Integer(1), simpleQueueMethod.getResult().getFirst());
+        Assert.assertEquals(Integer.valueOf(1), simpleQueueMethod.getResult().getFirst());
         rabbitConsumer2.close();
     }
 
@@ -71,11 +67,7 @@ public class ConsumerClientProxyTest {
         // WHEN
         remote.accept(null);
 
-        synchronized (simpleQueueMethod) {
-            if (simpleQueueMethod.getResult() != null) {
-                simpleQueueMethod.wait(300);
-            }
-        }
+        Thread.sleep(300);
 
         // THEN
         Assert.assertNull(simpleQueueMethod.getResult());
@@ -107,12 +99,17 @@ public class ConsumerClientProxyTest {
 
     @Test(expected = AlreadyClosedException.class)
     public void testCloseConsumer() throws Exception {
+        // GIVEN
         ConsumerQueueDefinition<IntegerMessage> queueDefinition = Factory.createQueue(TestUtil.getRandomQueueName(), IntegerMessage.class);
         SimpleConsumerImpl simpleQueueMethod = new SimpleConsumerImpl(null);
         RabbitElement rabbitConsumer2 = Factory.createConsumer(BrokerUtils.getConnectionFactory(), queueDefinition, simpleQueueMethod);
 
+        // WHEN
         rabbitConsumer2.close();
         rabbitConsumer2.getMessageCount();
+
+        // THEN
+        Assert.fail("Exception should occurred");
     }
 
     @Test(expected = AlreadyClosedException.class)
@@ -120,7 +117,11 @@ public class ConsumerClientProxyTest {
         ConsumerQueueDefinition<IntegerMessage> queueDefinition = Factory.createQueue(TestUtil.getRandomQueueName(), IntegerMessage.class);
         RabbitClientConsumer<IntegerMessage> remote = Factory.createClient(BrokerUtils.getConnectionFactory(), queueDefinition);
 
+        // WHEN
         remote.close();
         remote.getMessageCount();
+
+        // THEN
+        Assert.fail("Exception should occurred");
     }
 }

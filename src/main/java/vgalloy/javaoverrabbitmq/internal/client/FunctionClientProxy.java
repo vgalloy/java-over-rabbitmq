@@ -21,7 +21,8 @@ import vgalloy.javaoverrabbitmq.api.model.RabbitClientFunction;
 import vgalloy.javaoverrabbitmq.api.queue.FunctionQueueDefinition;
 import vgalloy.javaoverrabbitmq.internal.exception.RabbitConsumerException;
 import vgalloy.javaoverrabbitmq.internal.exception.RabbitRemoteException;
-import vgalloy.javaoverrabbitmq.internal.marshaller.impl.ExtendedMarshaller;
+import vgalloy.javaoverrabbitmq.internal.marshaller.ExtendedMarshaller;
+import vgalloy.javaoverrabbitmq.internal.marshaller.impl.ExtendedMarshallerImpl;
 
 /**
  * Created by Vincent Galloy on 15/08/16.
@@ -33,6 +34,7 @@ public final class FunctionClientProxy<P, R> extends AbstractClient implements R
     private static final Logger LOGGER = LoggerFactory.getLogger(FunctionClientProxy.class);
 
     private final FunctionQueueDefinition<P, R> functionQueueDefinition;
+    private final ExtendedMarshaller extendedMarshaller;
 
     /**
      * Constructor.
@@ -43,6 +45,7 @@ public final class FunctionClientProxy<P, R> extends AbstractClient implements R
     public FunctionClientProxy(FunctionQueueDefinition<P, R> functionQueueDefinition, Connection connection) {
         super(functionQueueDefinition, connection);
         this.functionQueueDefinition = Objects.requireNonNull(functionQueueDefinition);
+        this.extendedMarshaller = new ExtendedMarshallerImpl(functionQueueDefinition.getMarshaller());
     }
 
     @Override
@@ -79,12 +82,12 @@ public final class FunctionClientProxy<P, R> extends AbstractClient implements R
                     if (properties.getCorrelationId().equals(corrId)) {
                         boolean isError = properties.getHeaders() != null && properties.getHeaders().containsKey(RabbitConsumerException.ERROR_HEADER);
                         if (isError) {
-                            RabbitRemoteException exception = ExtendedMarshaller.deserializeError(functionQueueDefinition.getMarshaller(), body);
+                            RabbitRemoteException exception = extendedMarshaller.deserializeError(body);
                             response.offer(() -> {
                                 throw exception;
                             });
                         } else {
-                            R r = ExtendedMarshaller.deserialize(functionQueueDefinition.getMarshaller(), functionQueueDefinition.getReturnMessageClass(), body);
+                            R r = extendedMarshaller.deserialize(functionQueueDefinition.getReturnMessageClass(), body);
                             response.offer(() -> r);
                         }
                     }

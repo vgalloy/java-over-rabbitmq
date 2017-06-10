@@ -77,7 +77,7 @@ public final class Factory {
      * Create a consumer.
      *
      * @param connectionFactory       the connection factory
-     * @param functionQueueDefinition the FunctionQueueDefinitionImpl to connect
+     * @param functionQueueDefinition the FunctionQueueDefinition to connect
      * @param implementation          the implementation
      * @param <P>                     the parameter message
      * @param <R>                     the result message
@@ -85,7 +85,7 @@ public final class Factory {
      */
     public static <P, R> RabbitElement createConsumer(ConnectionFactory connectionFactory, FunctionQueueDefinition<P, R> functionQueueDefinition, Function<P, R> implementation) {
         Objects.requireNonNull(connectionFactory, "ConnectionFactory can not be null");
-        Objects.requireNonNull(functionQueueDefinition, "FunctionQueueDefinitionImpl can not be null");
+        Objects.requireNonNull(functionQueueDefinition, "FunctionQueueDefinition can not be null");
         try {
             Connection connection = connectionFactory.newConnection();
             Channel channel = connection.createChannel();
