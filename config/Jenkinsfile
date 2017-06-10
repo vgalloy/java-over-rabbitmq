@@ -3,5 +3,5 @@ node {
     git url: 'https://github.com/vgalloy/riot-api-java.git'
 
     stage 'Compile'
-    sh "mvn clean install -DskipITs"
+    sh "mvn clean install -DskipTests"
 }
