@@ -141,7 +141,7 @@
         <module name="UnusedImports"/>
         <module name="CustomImportOrder">
             <property name="standardPackageRegExp" value="^java\."/>
-            <property name="specialImportsRegExp" value="^vgalloy\."/>
+            <property name="specialImportsRegExp" value="^com.vgalloy\."/>
             <property name="customImportOrderRules" value="STATIC###STANDARD_JAVA_PACKAGE###THIRD_PARTY_PACKAGE###SPECIAL_IMPORTS"/>
             <property name="sortImportsInGroupAlphabetically" value="true"/>
             <property name="separateLineBetweenGroups" value="true"/>

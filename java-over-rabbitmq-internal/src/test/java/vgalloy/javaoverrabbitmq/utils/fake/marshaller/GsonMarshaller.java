@@ -2,7 +2,7 @@ package vgalloy.javaoverrabbitmq.utils.fake.marshaller;
 
 import com.google.gson.Gson;
 
-import vgalloy.javaoverrabbitmq.api.marshaller.RabbitMessageMarshaller;
+import com.vgalloy.javaoverrabbitmq.api.marshaller.RabbitMessageMarshaller;
 
 /**
  * Created by Vincent Galloy on 15/08/16.
