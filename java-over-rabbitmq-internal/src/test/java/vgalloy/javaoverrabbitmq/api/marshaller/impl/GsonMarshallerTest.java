@@ -16,7 +16,7 @@ import static org.junit.Assert.assertNull;
  *
  * @author Vincent Galloy
  */
-public class GsonMarshallerTest {
+public final class GsonMarshallerTest {
 
     private final RabbitMessageMarshaller gsonMarshaller = GsonMarshaller.INSTANCE;
 

@@ -11,9 +11,8 @@ import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
-
-import vgalloy.javaoverrabbitmq.api.Factory;
 import vgalloy.javaoverrabbitmq.api.exception.JavaOverRabbitException;
+import vgalloy.javaoverrabbitmq.api.factory.RabbitmqFactory;
 import vgalloy.javaoverrabbitmq.api.model.RabbitClientFunction;
 import vgalloy.javaoverrabbitmq.api.model.RabbitElement;
 import vgalloy.javaoverrabbitmq.api.queue.FunctionQueueDefinition;
@@ -33,7 +32,7 @@ import static org.junit.Assert.fail;
  *
  * @author Vincent Galloy
  */
-public class FunctionClientProxyTest {
+public final class FunctionClientProxyTest {
 
     private static Broker broker;
 
@@ -47,12 +46,14 @@ public class FunctionClientProxyTest {
         broker.shutdown();
     }
 
+    private final RabbitmqFactory rabbitmqFactory = RabbitmqFactory.getInstance();
+
     @Test
     public void testSimpleRPC() {
         // GIVEN
-        FunctionQueueDefinition<DoubleIntegerMessage, IntegerMessage> fakeFunctionQueueDefinition = Factory.createQueue(TestUtil.getRandomQueueName(), DoubleIntegerMessage.class, IntegerMessage.class);
-        RabbitElement rabbitConsumer = Factory.createConsumer(BrokerUtils.getConnectionFactory(), fakeFunctionQueueDefinition, new FunctionMethodImpl());
-        Function<DoubleIntegerMessage, IntegerMessage> remote = Factory.createClient(BrokerUtils.getConnectionFactory(), fakeFunctionQueueDefinition);
+        FunctionQueueDefinition<DoubleIntegerMessage, IntegerMessage> fakeFunctionQueueDefinition = rabbitmqFactory.createQueue(TestUtil.getRandomQueueName(), DoubleIntegerMessage.class, IntegerMessage.class);
+        RabbitElement rabbitConsumer = rabbitmqFactory.createConsumer(BrokerUtils.getConnectionFactory(), fakeFunctionQueueDefinition, new FunctionMethodImpl());
+        Function<DoubleIntegerMessage, IntegerMessage> remote = rabbitmqFactory.createClient(BrokerUtils.getConnectionFactory(), fakeFunctionQueueDefinition);
 
         // WHEN
         IntegerMessage result = remote.apply(new DoubleIntegerMessage(1, 2));
@@ -75,10 +76,10 @@ public class FunctionClientProxyTest {
             }
             return new IntegerMessage(doubleIntegerMessage.getFirst() + doubleIntegerMessage.getSecond());
         };
-        FunctionQueueDefinition<DoubleIntegerMessage, IntegerMessage> queueDefinition = Factory.createQueue(TestUtil.getRandomQueueName(), DoubleIntegerMessage.class, IntegerMessage.class);
+        FunctionQueueDefinition<DoubleIntegerMessage, IntegerMessage> queueDefinition = rabbitmqFactory.createQueue(TestUtil.getRandomQueueName(), DoubleIntegerMessage.class, IntegerMessage.class);
         queueDefinition.setTimeoutMillis(1000);
-        RabbitElement rabbitConsumer = Factory.createConsumer(BrokerUtils.getConnectionFactory(), queueDefinition, function);
-        Function<DoubleIntegerMessage, IntegerMessage> client = Factory.createClient(BrokerUtils.getConnectionFactory(), queueDefinition);
+        RabbitElement rabbitConsumer = rabbitmqFactory.createConsumer(BrokerUtils.getConnectionFactory(), queueDefinition, function);
+        Function<DoubleIntegerMessage, IntegerMessage> client = rabbitmqFactory.createClient(BrokerUtils.getConnectionFactory(), queueDefinition);
         Runnable runnable = () -> {
             try {
                 client.apply(new DoubleIntegerMessage(1, 2));
@@ -109,10 +110,10 @@ public class FunctionClientProxyTest {
         Function<DoubleIntegerMessage, IntegerMessage> function = doubleIntegerMessage -> {
             throw new RuntimeException("Shit Happens");
         };
-        FunctionQueueDefinition<DoubleIntegerMessage, IntegerMessage> queueDefinition = Factory.createQueue(TestUtil.getRandomQueueName(), DoubleIntegerMessage.class, IntegerMessage.class);
+        FunctionQueueDefinition<DoubleIntegerMessage, IntegerMessage> queueDefinition = rabbitmqFactory.createQueue(TestUtil.getRandomQueueName(), DoubleIntegerMessage.class, IntegerMessage.class);
         queueDefinition.setTimeoutMillis(1000);
-        RabbitElement rabbitConsumer = Factory.createConsumer(BrokerUtils.getConnectionFactory(), queueDefinition, function);
-        Function<DoubleIntegerMessage, IntegerMessage> remote = Factory.createClient(BrokerUtils.getConnectionFactory(), queueDefinition);
+        RabbitElement rabbitConsumer = rabbitmqFactory.createConsumer(BrokerUtils.getConnectionFactory(), queueDefinition, function);
+        Function<DoubleIntegerMessage, IntegerMessage> remote = rabbitmqFactory.createClient(BrokerUtils.getConnectionFactory(), queueDefinition);
 
         // WHEN
         long start = System.currentTimeMillis();
@@ -130,10 +131,10 @@ public class FunctionClientProxyTest {
     public void testWithReturnNull() throws Exception {
         // GIVEN
         Function<DoubleIntegerMessage, IntegerMessage> function = doubleIntegerMessage -> null;
-        FunctionQueueDefinition<DoubleIntegerMessage, IntegerMessage> queueDefinition = Factory.createQueue(TestUtil.getRandomQueueName(), DoubleIntegerMessage.class, IntegerMessage.class);
+        FunctionQueueDefinition<DoubleIntegerMessage, IntegerMessage> queueDefinition = rabbitmqFactory.createQueue(TestUtil.getRandomQueueName(), DoubleIntegerMessage.class, IntegerMessage.class);
         queueDefinition.setTimeoutMillis(1000);
-        RabbitElement rabbitConsumer = Factory.createConsumer(BrokerUtils.getConnectionFactory(), queueDefinition, function);
-        Function<DoubleIntegerMessage, IntegerMessage> remote = Factory.createClient(BrokerUtils.getConnectionFactory(), queueDefinition);
+        RabbitElement rabbitConsumer = rabbitmqFactory.createConsumer(BrokerUtils.getConnectionFactory(), queueDefinition, function);
+        Function<DoubleIntegerMessage, IntegerMessage> remote = rabbitmqFactory.createClient(BrokerUtils.getConnectionFactory(), queueDefinition);
 
         // WHEN
         try {
@@ -156,11 +157,11 @@ public class FunctionClientProxyTest {
                 }
             return 2 * e;
         };
-        FunctionQueueDefinition<Integer, Integer> queueDefinition = Factory.createQueue(TestUtil.getRandomQueueName(), Integer.class, Integer.class);
-        Factory.createConsumer(BrokerUtils.getConnectionFactory(), queueDefinition, function);
+        FunctionQueueDefinition<Integer, Integer> queueDefinition = rabbitmqFactory.createQueue(TestUtil.getRandomQueueName(), Integer.class, Integer.class);
+        rabbitmqFactory.createConsumer(BrokerUtils.getConnectionFactory(), queueDefinition, function);
 
         Runnable runnable = () -> {
-            Function<Integer, Integer> client = Factory.createClient(BrokerUtils.getConnectionFactory(), queueDefinition);
+            Function<Integer, Integer> client = rabbitmqFactory.createClient(BrokerUtils.getConnectionFactory(), queueDefinition);
             for (int i = 0; i < 10; i++) {
                 int value = Math.abs(random.nextInt() % 100);
                 int result = client.apply(value);
@@ -181,8 +182,8 @@ public class FunctionClientProxyTest {
 
     @Test(expected = AlreadyClosedException.class)
     public void testCloseConsumer() {
-        FunctionQueueDefinition<DoubleIntegerMessage, IntegerMessage> fakeFunctionQueueDefinition = Factory.createQueue(TestUtil.getRandomQueueName(), DoubleIntegerMessage.class, IntegerMessage.class);
-        RabbitElement rabbitConsumer = Factory.createConsumer(BrokerUtils.getConnectionFactory(), fakeFunctionQueueDefinition, new FunctionMethodImpl());
+        FunctionQueueDefinition<DoubleIntegerMessage, IntegerMessage> fakeFunctionQueueDefinition = rabbitmqFactory.createQueue(TestUtil.getRandomQueueName(), DoubleIntegerMessage.class, IntegerMessage.class);
+        RabbitElement rabbitConsumer = rabbitmqFactory.createConsumer(BrokerUtils.getConnectionFactory(), fakeFunctionQueueDefinition, new FunctionMethodImpl());
 
         rabbitConsumer.close();
         rabbitConsumer.getMessageCount();
@@ -190,8 +191,8 @@ public class FunctionClientProxyTest {
 
     @Test(expected = AlreadyClosedException.class)
     public void testCloseClient() {
-        FunctionQueueDefinition<DoubleIntegerMessage, IntegerMessage> fakeFunctionQueueDefinition = Factory.createQueue(TestUtil.getRandomQueueName(), DoubleIntegerMessage.class, IntegerMessage.class);
-        RabbitClientFunction<?, ?> remote = Factory.createClient(BrokerUtils.getConnectionFactory(), fakeFunctionQueueDefinition);
+        FunctionQueueDefinition<DoubleIntegerMessage, IntegerMessage> fakeFunctionQueueDefinition = rabbitmqFactory.createQueue(TestUtil.getRandomQueueName(), DoubleIntegerMessage.class, IntegerMessage.class);
+        RabbitClientFunction<?, ?> remote = rabbitmqFactory.createClient(BrokerUtils.getConnectionFactory(), fakeFunctionQueueDefinition);
 
         remote.close();
         remote.getMessageCount();

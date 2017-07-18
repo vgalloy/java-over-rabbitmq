@@ -8,8 +8,7 @@ import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
-
-import vgalloy.javaoverrabbitmq.api.Factory;
+import vgalloy.javaoverrabbitmq.api.factory.RabbitmqFactory;
 import vgalloy.javaoverrabbitmq.api.model.RabbitClientConsumer;
 import vgalloy.javaoverrabbitmq.api.model.RabbitElement;
 import vgalloy.javaoverrabbitmq.api.queue.ConsumerQueueDefinition;
@@ -24,7 +23,7 @@ import vgalloy.javaoverrabbitmq.utils.util.TestUtil;
  *
  * @author Vincent Galloy
  */
-public class ConsumerClientProxyTest {
+public final class ConsumerClientProxyTest {
 
     private static Broker broker;
 
@@ -38,13 +37,15 @@ public class ConsumerClientProxyTest {
         broker.shutdown();
     }
 
+    private final RabbitmqFactory rabbitmqFactory = RabbitmqFactory.getInstance();
+
     @Test
     public void testSimple() throws Exception {
         // GIVEN
-        ConsumerQueueDefinition<IntegerMessage> queueDefinition = Factory.createQueue(TestUtil.getRandomQueueName(), IntegerMessage.class);
+        ConsumerQueueDefinition<IntegerMessage> queueDefinition = rabbitmqFactory.createQueue(TestUtil.getRandomQueueName(), IntegerMessage.class);
         SimpleConsumerImpl simpleQueueMethod = new SimpleConsumerImpl(null);
-        RabbitElement rabbitConsumer2 = Factory.createConsumer(BrokerUtils.getConnectionFactory(), queueDefinition, simpleQueueMethod);
-        Consumer<IntegerMessage> remote = Factory.createClient(BrokerUtils.getConnectionFactory(), queueDefinition);
+        RabbitElement rabbitConsumer2 = rabbitmqFactory.createConsumer(BrokerUtils.getConnectionFactory(), queueDefinition, simpleQueueMethod);
+        Consumer<IntegerMessage> remote = rabbitmqFactory.createClient(BrokerUtils.getConnectionFactory(), queueDefinition);
 
         // WHEN
         remote.accept(new IntegerMessage(1));
@@ -59,10 +60,10 @@ public class ConsumerClientProxyTest {
     @Test
     public void testNullAsArgument() throws Exception {
         // GIVEN
-        ConsumerQueueDefinition<IntegerMessage> queueDefinition = Factory.createQueue(TestUtil.getRandomQueueName(), IntegerMessage.class);
+        ConsumerQueueDefinition<IntegerMessage> queueDefinition = rabbitmqFactory.createQueue(TestUtil.getRandomQueueName(), IntegerMessage.class);
         SimpleConsumerImpl simpleQueueMethod = new SimpleConsumerImpl(new IntegerMessage(1));
-        RabbitElement rabbitConsumer2 = Factory.createConsumer(BrokerUtils.getConnectionFactory(), queueDefinition, simpleQueueMethod);
-        Consumer<IntegerMessage> remote = Factory.createClient(BrokerUtils.getConnectionFactory(), queueDefinition);
+        RabbitElement rabbitConsumer2 = rabbitmqFactory.createConsumer(BrokerUtils.getConnectionFactory(), queueDefinition, simpleQueueMethod);
+        Consumer<IntegerMessage> remote = rabbitmqFactory.createClient(BrokerUtils.getConnectionFactory(), queueDefinition);
 
         // WHEN
         remote.accept(null);
@@ -77,10 +78,10 @@ public class ConsumerClientProxyTest {
     @Test
     public void testNumberMessageInQueue() throws Exception {
         // GIVEN
-        ConsumerQueueDefinition<IntegerMessage> queueDefinition = Factory.createQueue(TestUtil.getRandomQueueName(), IntegerMessage.class);
+        ConsumerQueueDefinition<IntegerMessage> queueDefinition = rabbitmqFactory.createQueue(TestUtil.getRandomQueueName(), IntegerMessage.class);
         SlowConsumerImpl slowConsumer = new SlowConsumerImpl();
-        RabbitElement rabbitConsumer2 = Factory.createConsumer(BrokerUtils.getConnectionFactory(), queueDefinition, slowConsumer);
-        RabbitClientConsumer<IntegerMessage> remote = Factory.createClient(BrokerUtils.getConnectionFactory(), queueDefinition);
+        RabbitElement rabbitConsumer2 = rabbitmqFactory.createConsumer(BrokerUtils.getConnectionFactory(), queueDefinition, slowConsumer);
+        RabbitClientConsumer<IntegerMessage> remote = rabbitmqFactory.createClient(BrokerUtils.getConnectionFactory(), queueDefinition);
 
         Assert.assertEquals(0, rabbitConsumer2.getMessageCount());
         remote.accept(new IntegerMessage(1));
@@ -100,9 +101,9 @@ public class ConsumerClientProxyTest {
     @Test(expected = AlreadyClosedException.class)
     public void testCloseConsumer() throws Exception {
         // GIVEN
-        ConsumerQueueDefinition<IntegerMessage> queueDefinition = Factory.createQueue(TestUtil.getRandomQueueName(), IntegerMessage.class);
+        ConsumerQueueDefinition<IntegerMessage> queueDefinition = rabbitmqFactory.createQueue(TestUtil.getRandomQueueName(), IntegerMessage.class);
         SimpleConsumerImpl simpleQueueMethod = new SimpleConsumerImpl(null);
-        RabbitElement rabbitConsumer2 = Factory.createConsumer(BrokerUtils.getConnectionFactory(), queueDefinition, simpleQueueMethod);
+        RabbitElement rabbitConsumer2 = rabbitmqFactory.createConsumer(BrokerUtils.getConnectionFactory(), queueDefinition, simpleQueueMethod);
 
         // WHEN
         rabbitConsumer2.close();
@@ -114,8 +115,8 @@ public class ConsumerClientProxyTest {
 
     @Test(expected = AlreadyClosedException.class)
     public void testCloseClient() throws Exception {
-        ConsumerQueueDefinition<IntegerMessage> queueDefinition = Factory.createQueue(TestUtil.getRandomQueueName(), IntegerMessage.class);
-        RabbitClientConsumer<IntegerMessage> remote = Factory.createClient(BrokerUtils.getConnectionFactory(), queueDefinition);
+        ConsumerQueueDefinition<IntegerMessage> queueDefinition = rabbitmqFactory.createQueue(TestUtil.getRandomQueueName(), IntegerMessage.class);
+        RabbitClientConsumer<IntegerMessage> remote = rabbitmqFactory.createClient(BrokerUtils.getConnectionFactory(), queueDefinition);
 
         // WHEN
         remote.close();

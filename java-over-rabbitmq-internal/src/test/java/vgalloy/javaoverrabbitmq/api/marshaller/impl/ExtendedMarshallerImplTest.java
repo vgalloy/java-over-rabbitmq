@@ -18,7 +18,7 @@ import static org.junit.Assert.assertNull;
  *
  * @author Vincent Galloy
  */
-public class ExtendedMarshallerImplTest {
+public final class ExtendedMarshallerImplTest {
 
     private final RabbitMessageMarshaller marshaller = GsonMarshaller.INSTANCE;
     private final ExtendedMarshaller extendedMarshaller = new ExtendedMarshallerImpl(GsonMarshaller.INSTANCE);

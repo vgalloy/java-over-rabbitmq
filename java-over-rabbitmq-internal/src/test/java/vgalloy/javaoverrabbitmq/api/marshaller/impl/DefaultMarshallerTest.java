@@ -14,7 +14,7 @@ import static org.junit.Assert.assertNull;
  *
  * @author Vincent Galloy
  */
-public class DefaultMarshallerTest {
+public final class DefaultMarshallerTest {
 
     private final RabbitMessageMarshaller marshaller = DefaultMarshaller.INSTANCE;
 
