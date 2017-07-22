@@ -15,16 +15,8 @@ import com.vgalloy.javaoverrabbitmq.api.marshaller.RabbitMessageMarshaller;
  *
  * @author Vincent Galloy
  */
-public final class DefaultMarshaller implements RabbitMessageMarshaller {
-
-    public static final RabbitMessageMarshaller INSTANCE = new DefaultMarshaller();
-
-    /**
-     * Constructor.
-     * To prevent external instantiation.
-     */
-    private DefaultMarshaller() {
-    }
+public enum  DefaultMarshaller implements RabbitMessageMarshaller {
+    INSTANCE;
 
     /**
      * Close the closable. Throw a {@link JavaOverRabbitException} if error occurred.
@@ -42,7 +34,7 @@ public final class DefaultMarshaller implements RabbitMessageMarshaller {
     }
 
     @Override
-    public <T> byte[] serialize(T message) {
+    public byte[] serialize(Object message) {
         ByteArrayOutputStream byteArrayOutputStream = null;
         ObjectOutputStream oos = null;
         try {

@@ -9,19 +9,11 @@ import com.vgalloy.javaoverrabbitmq.api.marshaller.RabbitMessageMarshaller;
  *
  * @author Vincent Galloy
  */
-public final class GsonMarshaller implements RabbitMessageMarshaller {
-
-    public static final RabbitMessageMarshaller INSTANCE = new GsonMarshaller();
-
-    /**
-     * Constructor.
-     * To prevent external instantiation.
-     */
-    private GsonMarshaller() {
-    }
+public enum GsonMarshaller implements RabbitMessageMarshaller {
+    INSTANCE;
 
     @Override
-    public <T> byte[] serialize(T message) {
+    public byte[] serialize(Object message) {
         Gson gson = new Gson();
         String string = gson.toJson(message);
         return string.getBytes();
