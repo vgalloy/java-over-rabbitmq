@@ -35,7 +35,7 @@
         <versions-maven-plugin.version>2.4</versions-maven-plugin.version>
 
         <!-- AMQP -->
-        <amqp-client.version>4.1.1</amqp-client.version>
+        <amqp-client.version>4.2.0</amqp-client.version>
         <qpid-broker.version>6.1.4</qpid-broker.version>
 
         <!-- Gson -->
