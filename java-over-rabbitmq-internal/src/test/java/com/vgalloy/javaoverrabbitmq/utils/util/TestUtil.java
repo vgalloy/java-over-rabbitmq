@@ -1,4 +1,4 @@
-package vgalloy.javaoverrabbitmq.utils.util;
+package com.vgalloy.javaoverrabbitmq.utils.util;
 
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;

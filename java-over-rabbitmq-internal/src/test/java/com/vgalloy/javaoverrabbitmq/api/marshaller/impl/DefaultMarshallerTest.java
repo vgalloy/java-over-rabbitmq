@@ -3,8 +3,8 @@ package com.vgalloy.javaoverrabbitmq.api.marshaller.impl;
 import org.junit.Test;
 
 import com.vgalloy.javaoverrabbitmq.api.marshaller.RabbitMessageMarshaller;
-import vgalloy.javaoverrabbitmq.utils.fake.message.DoubleIntegerMessage;
-import vgalloy.javaoverrabbitmq.utils.fake.message.IntegerMessage;
+import com.vgalloy.javaoverrabbitmq.utils.fake.message.DoubleIntegerMessage;
+import com.vgalloy.javaoverrabbitmq.utils.fake.message.IntegerMessage;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;

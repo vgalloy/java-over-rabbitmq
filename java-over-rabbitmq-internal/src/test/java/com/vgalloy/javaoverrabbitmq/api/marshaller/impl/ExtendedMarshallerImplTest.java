@@ -7,8 +7,8 @@ import com.vgalloy.javaoverrabbitmq.internal.exception.RabbitConsumerException;
 import com.vgalloy.javaoverrabbitmq.internal.exception.RabbitRemoteException;
 import com.vgalloy.javaoverrabbitmq.internal.marshaller.ExtendedMarshaller;
 import com.vgalloy.javaoverrabbitmq.internal.marshaller.impl.ExtendedMarshallerImpl;
-import vgalloy.javaoverrabbitmq.utils.fake.marshaller.GsonMarshaller;
-import vgalloy.javaoverrabbitmq.utils.fake.message.DoubleIntegerMessage;
+import com.vgalloy.javaoverrabbitmq.utils.fake.marshaller.GsonMarshaller;
+import com.vgalloy.javaoverrabbitmq.utils.fake.message.DoubleIntegerMessage;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;

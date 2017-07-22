@@ -1,4 +1,4 @@
-package vgalloy.javaoverrabbitmq.utils.util;
+package com.vgalloy.javaoverrabbitmq.utils.util;
 
 import com.rabbitmq.client.ConnectionFactory;
 import org.apache.qpid.server.Broker;

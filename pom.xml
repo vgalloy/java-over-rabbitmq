@@ -9,6 +9,10 @@
     <version>2.1.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
+    <scm>
+        <developerConnection>scm:git:https://github.com/vgalloy/java-over-rabbitmq</developerConnection>
+    </scm>
+
     <modules>
         <module>java-over-rabbitmq-api</module>
         <module>java-over-rabbitmq-internal</module>
@@ -107,6 +111,11 @@
                     <source>${java.version}</source>
                     <target>${java.version}</target>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-release-plugin</artifactId>
+                <version>2.5.3</version>
             </plugin>
 
             <!-- Checkstyle -->

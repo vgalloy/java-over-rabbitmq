@@ -1,4 +1,4 @@
-package vgalloy.javaoverrabbitmq.utils.fake.marshaller;
+package com.vgalloy.javaoverrabbitmq.utils.fake.marshaller;
 
 import com.google.gson.Gson;
 

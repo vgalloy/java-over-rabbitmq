@@ -16,11 +16,11 @@ import com.vgalloy.javaoverrabbitmq.api.factory.RabbitmqFactory;
 import com.vgalloy.javaoverrabbitmq.api.model.RabbitClientFunction;
 import com.vgalloy.javaoverrabbitmq.api.model.RabbitElement;
 import com.vgalloy.javaoverrabbitmq.api.queue.FunctionQueueDefinition;
-import vgalloy.javaoverrabbitmq.utils.fake.message.DoubleIntegerMessage;
-import vgalloy.javaoverrabbitmq.utils.fake.message.IntegerMessage;
-import vgalloy.javaoverrabbitmq.utils.fake.method.FunctionMethodImpl;
-import vgalloy.javaoverrabbitmq.utils.util.BrokerUtils;
-import vgalloy.javaoverrabbitmq.utils.util.TestUtil;
+import com.vgalloy.javaoverrabbitmq.utils.fake.message.DoubleIntegerMessage;
+import com.vgalloy.javaoverrabbitmq.utils.fake.message.IntegerMessage;
+import com.vgalloy.javaoverrabbitmq.utils.fake.method.FunctionMethodImpl;
+import com.vgalloy.javaoverrabbitmq.utils.util.BrokerUtils;
+import com.vgalloy.javaoverrabbitmq.utils.util.TestUtil;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;

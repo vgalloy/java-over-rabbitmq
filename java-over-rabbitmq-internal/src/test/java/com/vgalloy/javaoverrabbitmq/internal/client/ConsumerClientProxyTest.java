@@ -12,11 +12,11 @@ import com.vgalloy.javaoverrabbitmq.api.factory.RabbitmqFactory;
 import com.vgalloy.javaoverrabbitmq.api.model.RabbitClientConsumer;
 import com.vgalloy.javaoverrabbitmq.api.model.RabbitElement;
 import com.vgalloy.javaoverrabbitmq.api.queue.ConsumerQueueDefinition;
-import vgalloy.javaoverrabbitmq.utils.fake.message.IntegerMessage;
-import vgalloy.javaoverrabbitmq.utils.fake.method.SimpleConsumerImpl;
-import vgalloy.javaoverrabbitmq.utils.fake.method.SlowConsumerImpl;
-import vgalloy.javaoverrabbitmq.utils.util.BrokerUtils;
-import vgalloy.javaoverrabbitmq.utils.util.TestUtil;
+import com.vgalloy.javaoverrabbitmq.utils.fake.message.IntegerMessage;
+import com.vgalloy.javaoverrabbitmq.utils.fake.method.SimpleConsumerImpl;
+import com.vgalloy.javaoverrabbitmq.utils.fake.method.SlowConsumerImpl;
+import com.vgalloy.javaoverrabbitmq.utils.util.BrokerUtils;
+import com.vgalloy.javaoverrabbitmq.utils.util.TestUtil;
 
 /**
  * Created by Vincent Galloy on 17/08/16.
